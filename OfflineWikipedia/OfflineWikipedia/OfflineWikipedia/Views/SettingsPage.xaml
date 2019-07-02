@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="OfflineWikipedia.Views.SettingsPage"
+             Title="Settings"
+             NavigationPage.HasNavigationBar="True"
+             NavigationPage.HasBackButton="True">
+
+    <ContentView>
+        <StackLayout BackgroundColor="WhiteSmoke" Padding="15" Spacing="10">
+            
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Download over Cellular: " VerticalOptions="CenterAndExpand"/>
+                <Switch x:Name="CellDownloadSwitch" VerticalOptions="CenterAndExpand" IsToggled="{Binding DownloadOverCeullular}"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Download Images: " VerticalOptions="CenterAndExpand"/>
+                <Switch x:Name="DownloadImagesSwitch" VerticalOptions="CenterAndExpand" IsToggled="{Binding DownloadImages}"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Number of Returned Exmaple Articles: " VerticalOptions="CenterAndExpand"/>
+                <Picker x:Name="NumberOfResultsPicker" SelectedItem="{Binding PickedItemNumber}" HorizontalOptions="FillAndExpand">
+                    <Picker.Items>
+                        <x:String>5</x:String>
+                        <x:String>10</x:String>
+                        <x:String>25</x:String>
+                        <x:String>50</x:String>
+                        <x:String>100</x:String>
+                    </Picker.Items>
+                </Picker>
+            </StackLayout>
+
+            <Button Text="Clear Saved Articles" HorizontalOptions="CenterAndExpand" Command="{Binding ClearArticlesCommand}"/>
+
+            <Button Text="About YoWiki" HorizontalOptions="CenterAndExpand" Command="{Binding AboutYoWikiCommand}"/>
+        </StackLayout> 
+    </ContentView>
+  
+</ContentPage>

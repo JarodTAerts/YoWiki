@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="OfflineWikipedia.Views.MainPage"
+             Title="Search and Download"
+             >
+    
+    <ContentView BackgroundColor="WhiteSmoke">
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
+
+            <Grid VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="60"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                </Grid.ColumnDefinitions>
+
+                    <Entry Grid.Row="0" Grid.Column="1" Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
+                    <Button Grid.Row="0" Grid.Column="2" Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding SearchButtonClickedCommand}"/>
+                
+                <ScrollView VerticalOptions="FillAndExpand" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                    <Label Text="{Binding ReturnedText}" TextColor="Black"/>
+                </ScrollView>
+
+                <ActivityIndicator Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" IsVisible="{Binding IsSearching}" IsRunning="{Binding IsSearching}"/>
+
+                <ListView ItemsSource="{Binding SearchResult.Items}" IsVisible="{Binding ResultsReturned}" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" 
+                          BackgroundColor="CornflowerBlue" HasUnevenRows="True" SelectedItem="{Binding SelectedItem}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Frame HasShadow="True" BackgroundColor="White">
+                                    <StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text="Title: " FontAttributes="Bold" MinimumWidthRequest="80"/>
+                                            <Label VerticalOptions="CenterAndExpand" Text="{Binding Title}"/>
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text="Size(Bytes): " FontAttributes="Bold"/>
+                                            <Label VerticalOptions="CenterAndExpand" Text="{Binding Size}"/>
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label VerticalOptions="CenterAndExpand" Text="{Binding Snippet}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Frame>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <StackLayout IsVisible="{Binding ResultsReturned}" VerticalOptions="FillAndExpand" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+                    <Button Text="Download and add to your Library" TextColor="WhiteSmoke" BackgroundColor="CornflowerBlue" Command="{Binding DownloadAllArticlesCommand}" VerticalOptions="FillAndExpand"/>
+                </StackLayout>
+            </Grid>
+        </StackLayout>
+    </ContentView>
+</ContentPage>

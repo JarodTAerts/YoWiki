@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Title="Discover"
+             x:Class="YoWiki.Views.BrowsePage">
+
+    <ContentView BackgroundColor="WhiteSmoke">
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
+
+            <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
+            <Button Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding SearchButtonClickedCommand}"/>
+
+            <ScrollView VerticalOptions="FillAndExpand">
+                <Label Text="Text from things and stuff." TextColor="Black"/>
+            </ScrollView>
+
+            <ListView ItemsSource="{Binding SavedArticles}" IsVisible="{Binding ResultsReturned}"
+                          BackgroundColor="Red" HasUnevenRows="True" SelectedItem="{Binding SelectedItem}" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout BackgroundColor="White" Padding="10">
+                                <Label Text="{Binding .}"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Label Text="{Binding NumbersText}" IsVisible="{Binding ResultsReturned}"/>
+
+        </StackLayout>
+    </ContentView>
+
+</ContentPage>

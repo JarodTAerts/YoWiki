@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:YoWiki.ViewModels"
+             mc:Ignorable="d"
+             x:Class="YoWiki.Views.DiscoverPage"
+             Title="{Binding Title}">
+
+    <ContentPage.BindingContext>
+        <local:DiscoverViewModel />
+    </ContentPage.BindingContext>
+
+    <ContentView BackgroundColor="WhiteSmoke">
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
+
+            <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
+            <Button Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding SearchButtonClickedCommand}"/>
+
+            <ScrollView VerticalOptions="FillAndExpand">
+                <Label Text="{Binding ReturnedText}" TextColor="Black"/>
+            </ScrollView>
+
+            <ListView ItemsSource="{Binding SearchResult.Items}" IsVisible="{Binding ResultsReturned}" 
+                          BackgroundColor="Red" HasUnevenRows="True" SelectedItem="{Binding SelectedItem}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Frame HasShadow="True" BackgroundColor="White">
+                                <StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Title: " FontAttributes="Bold" MinimumWidthRequest="80"/>
+                                        <Label VerticalOptions="CenterAndExpand" Text="{Binding Title}"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Size(Bytes): " FontAttributes="Bold"/>
+                                        <Label VerticalOptions="CenterAndExpand" Text="{Binding Size}"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label VerticalOptions="CenterAndExpand" Text="{Binding Snippet}"/>
+                                    </StackLayout>
+                                </StackLayout>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackLayout IsVisible="{Binding ResultsReturned}" VerticalOptions="FillAndExpand">
+                <Button Text="Download and add to your Library" TextColor="WhiteSmoke" BackgroundColor="CornflowerBlue" Command="{Binding DownloadAllArticlesCommand}" VerticalOptions="FillAndExpand"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentView>
+
+</ContentPage>

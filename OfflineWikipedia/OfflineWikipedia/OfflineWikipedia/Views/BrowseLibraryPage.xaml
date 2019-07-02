@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="OfflineWikipedia.Views.BrowseLibraryPage"
+             Title="Browse Library">
+
+    <ContentView BackgroundColor="WhiteSmoke">
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
+
+            <Grid VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                </Grid.ColumnDefinitions>
+
+                <Entry Grid.Row="0" Grid.Column="1" Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
+                <Button Grid.Row="0" Grid.Column="2" Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding SearchButtonClickedCommand}"/>
+
+                <ScrollView VerticalOptions="FillAndExpand" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+                    <Label Text="{Binding ReturnedText}" TextColor="Black"/>
+                </ScrollView>
+
+                <ActivityIndicator Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" IsVisible="{Binding IsSearching}" IsRunning="{Binding IsSearching}"/>
+
+                <ListView ItemsSource="{Binding SavedArticles}" IsVisible="{Binding ResultsReturned}" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" 
+                          BackgroundColor="CornflowerBlue" HasUnevenRows="True" SelectedItem="{Binding SelectedItem}" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout BackgroundColor="White" Padding="10">
+                                    <Label Text="{Binding .}"/>
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Label Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding NumbersText}" IsVisible="{Binding ResultsReturned}"/>
+            </Grid>
+        </StackLayout>
+    </ContentView>
+
+</ContentPage>
