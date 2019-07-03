@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Xamarin.Forms;
+using YoWiki.Services;
 
 namespace YoWiki.ViewModels
 {
@@ -81,6 +82,8 @@ namespace YoWiki.ViewModels
             ReturnedText = "Search your local library to read articles.";
             EntryText = "";
             IsSearching = false;
+
+            OnNavigatedTo();
         }
         #endregion
 
@@ -90,7 +93,7 @@ namespace YoWiki.ViewModels
         /// </summary>
         private async void OnSelectedItemChanged()
         {
-            ////If the selected item is not null then open the view article page and send the title you selected as a paramater
+            ////If the selected item is not null then open the view article page and send the title you selected as a parameter
             //if (SelectedItem != null)
             //{
             //    Debug.WriteLine("Selected thing changed" + SelectedItem);
@@ -113,33 +116,33 @@ namespace YoWiki.ViewModels
         #endregion
 
         #region Overrides
-        //public async override void OnNavigatedTo(NavigationParameters parameters)
-        //{
-        //    //When navigated to make sure no item is selected and set is searching so the activity monitor shows up
-        //    SelectedItem = null;
-        //    if (SavedArticles == null || SavedArticles.Count == 0)
-        //    {
-        //        IsSearching = true;
-        //        //Get all the names of the articles and put them into the all articles list
-        //        //Then set Saved articles to all articles so they are all displayed to start
-        //        AllSavedArticles = await StorageService.GetNamesOfSavedArticles();
-        //        SavedArticles = AllSavedArticles;
-        //        NumbersText = "Number of Articles: " + SavedArticles.Count;
-        //        //Once that is all done then make the activity monitor go away
-        //        IsSearching = false;
-        //    }
-        //    if (SavedArticles != null && SavedArticles.Count > 0)
-        //    {
-        //        //If there were names of articles returned then set results returned to show the list
-        //        ResultsReturned = true;
-        //    }
-        //    else
-        //    {
-        //        //Otehrwise let them know they dont have anything saved and dont show the list
-        //        ReturnedText = "It doesn't seem that you have any articles saved. Go and add download some articles in the Add to Library page.";
-        //        ResultsReturned = false;
-        //    }
-        //}
+        public async void OnNavigatedTo()
+        {
+            //When navigated to make sure no item is selected and set is searching so the activity monitor shows up
+            SelectedItem = null;
+            if (SavedArticles == null || SavedArticles.Count == 0)
+            {
+                IsSearching = true;
+                //Get all the names of the articles and put them into the all articles list
+                //Then set Saved articles to all articles so they are all displayed to start
+                AllSavedArticles = await StorageService.GetNamesOfSavedArticles();
+                SavedArticles = AllSavedArticles;
+                NumbersText = "Number of Articles: " + SavedArticles.Count;
+                //Once that is all done then make the activity monitor go away
+                IsSearching = false;
+            }
+            if (SavedArticles != null && SavedArticles.Count > 0)
+            {
+                //If there were names of articles returned then set results returned to show the list
+                ResultsReturned = true;
+            }
+            else
+            {
+                //Otherwise let them know they dont have anything saved and dont show the list
+                ReturnedText = "It doesn't seem that you have any articles saved. Go and add download some articles in the Add to Library page.";
+                ResultsReturned = false;
+            }
+        }
         #endregion
 
     }

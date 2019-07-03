@@ -13,7 +13,6 @@ namespace YoWiki.ViewModels
     class DiscoverViewModel : BaseViewModel
     {
         #region Properties and Bindings
-        //private IPageDialogService _dialogService;
 
         private WikipediaSearchResult _searchResult;
         public WikipediaSearchResult SearchResult
@@ -80,7 +79,6 @@ namespace YoWiki.ViewModels
             ResultsReturned = false;
             ReturnedText = "Search any topic you are interested in to get some results.";
             IsSearching = false;
-            //_dialogService = dialog;
         }
         #endregion
 
@@ -122,7 +120,7 @@ namespace YoWiki.ViewModels
                 IsSearching = true;
                 await StorageService.SaveHTMLFileToStorage(SelectedItem.Title);
                 IsSearching = false;
-                //await _dialogService.DisplayAlertAsync("Article Added", "Article \"" + SelectedItem.Title + "\" has been downloaded and added to your library.", "Okay");
+                await Shell.Current.DisplayAlert("Article Added", $"Article {SelectedItem.Title} has been downloaded and added to your library!", "Cool!");
             }
         }
 
@@ -176,20 +174,8 @@ namespace YoWiki.ViewModels
         /// <returns></returns>
         private async Task SendAlertOrNotification(string title, string text, string buttonText)
         {
-            //if (!App.IsInBackgrounded)
-            //{
-            //    Debug.WriteLine($"App is in foreground..................");
-            //    await _dialogService.DisplayAlertAsync(title, text, buttonText);
-            //}
-            //else
-            //{
-            //    Debug.WriteLine($"App is in background. Should send a notification");
-            //    await _dialogService.DisplayAlertAsync(title, text, buttonText);
-            //    //TODO: Get the notifications working
-            //    //await CrossNotifications.Current.Send(new Notification { Title=title, Message=text, When=TimeSpan.FromSeconds(1)});
-            //    await CrossNotifications.Current.Send(new Notification { Title = title, Message = text });
-            //    //CrossLocalNotifications.Current.Show(title, text);
-            //}
+            // TODO: Send notification if app is in background
+            await Shell.Current.DisplayAlert(title, text, buttonText);
         }
 
         /// <summary>
@@ -209,19 +195,19 @@ namespace YoWiki.ViewModels
             //Set the string to be the one that will appear the best based on the numbering
             if (seconds > 1)
             {
-                addOn = String.Format("{0:f2} Seconds", seconds);
+                addOn = string.Format("{0:f2} Seconds", seconds);
             }
             if (minutes > 1)
             {
-                addOn = String.Format("{0:f2} Minutes", minutes);
+                addOn = string.Format("{0:f2} Minutes", minutes);
             }
             if (hours > 1)
             {
-                addOn = String.Format("{0:f2} Hours", hours);
+                addOn = string.Format("{0:f2} Hours", hours);
             }
             if (days > 1)
             {
-                addOn = String.Format("{0:f2} Days", days);
+                addOn = string.Format("{0:f2} Days", days);
             }
 
             return addOn;
