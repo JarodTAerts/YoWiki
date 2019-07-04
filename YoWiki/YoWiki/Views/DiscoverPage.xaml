@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:YoWiki.ViewModels"
              mc:Ignorable="d"
              x:Class="YoWiki.Views.DiscoverPage"
-             Title="{Binding Title}">
+             Title="YoWiki">
 
     <ContentPage.BindingContext>
         <local:DiscoverViewModel />
@@ -15,10 +15,12 @@
     <ContentView BackgroundColor="WhiteSmoke">
         <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
-            <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
-            <Button Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding SearchButtonClickedCommand}"/>
+            <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
+            <Button Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}"
+                    BackgroundColor="Blue" TextColor="WhiteSmoke" CornerRadius="15"/>
 
-            <ScrollView VerticalOptions="FillAndExpand">
+
+            <ScrollView VerticalOptions="StartAndExpand">
                 <Label Text="{Binding ReturnedText}" TextColor="Black"/>
             </ScrollView>
 

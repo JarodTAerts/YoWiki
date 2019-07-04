@@ -14,16 +14,12 @@ namespace YoWiki.Models
         public string Title { get; set; }
         public int Wordcount { get; set; }
         public int Size { get; set; }
-        private string _snippet;
-        public string Snippet {
-            get => _snippet;
-            set => _snippet=HTMLHandler.SimpleHTMLStrip(value);
-        }
+        public string Snippet { get; set; }
         public DateTime Timestamp { get; set; }
 
         public override string ToString()
         {
-            return "\nTitle: " + Title + "\nWordCount: " + Wordcount + "\nSize: " + Size + "\nSnippet: " + HTMLHandler.StripHTML(Snippet) + "\nTime: " + Timestamp ;
+            return "\nTitle: " + Title + "\nWordCount: " + Wordcount + "\nSize: " + Size + "\nSnippet: " + Snippet + "\nTime: " + Timestamp ;
         }
 
     }

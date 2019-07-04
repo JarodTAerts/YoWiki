@@ -28,4 +28,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Accessors\" />
+    <Folder Include="Accessors\Interfaces\" />
+    <Folder Include="Services\Interfaces\" />
+  </ItemGroup>
 </Project>

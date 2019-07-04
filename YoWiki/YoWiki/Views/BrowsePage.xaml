@@ -4,21 +4,23 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             Title="Discover"
+             Title="YoWiki"
              x:Class="YoWiki.Views.BrowsePage">
 
     <ContentView BackgroundColor="WhiteSmoke">
         <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
-            <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
-            <Button Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding SearchButtonClickedCommand}"/>
+            <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
+            <Button Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}"
+                    BackgroundColor="CornflowerBlue" TextColor="WhiteSmoke" CornerRadius="15"/>
 
-            <ScrollView VerticalOptions="FillAndExpand">
+            <ScrollView VerticalOptions="Start">
                 <Label Text="Text from things and stuff." TextColor="Black"/>
             </ScrollView>
 
             <ListView ItemsSource="{Binding SavedArticles}" IsVisible="{Binding ResultsReturned}"
-                          BackgroundColor="Red" HasUnevenRows="True" SelectedItem="{Binding SelectedItem}" >
+                           HasUnevenRows="True" SelectedItem="{Binding SelectedItem}" 
+                          SeparatorVisibility="None">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

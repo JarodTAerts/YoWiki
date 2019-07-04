@@ -7,12 +7,17 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using YoWiki.Models;
 using YoWiki.Services;
+using YoWiki.Services.Interfaces;
 
 namespace YoWiki.ViewModels
 {
     class DiscoverViewModel : BaseViewModel
     {
         #region Properties and Bindings
+
+        private readonly ILocalArticlesService localArticlesService;
+        private readonly IHTMLService hTMLService;
+        private readonly IWikipediaService wikipediaService;
 
         private WikipediaSearchResult _searchResult;
         public WikipediaSearchResult SearchResult
@@ -73,6 +78,11 @@ namespace YoWiki.ViewModels
         #region Constructor
         public DiscoverViewModel()
         {
+            this.localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
+            this.hTMLService = DependencyService.Resolve<IHTMLService>();
+            this.wikipediaService = DependencyService.Resolve<IWikipediaService>();
+
+            Title = "Discover";
             //Set properties to what they need to the list doesn't show until results are loaded and set search text
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             DownloadAllArticlesCommand = new Command(OnDownloadAllClicked);
@@ -93,7 +103,7 @@ namespace YoWiki.ViewModels
                 //Set is searching to true, get the number of articles to get as examples and call function to search from APIService
                 IsSearching = true;
                 int numberOfArticlesReturned = Settings.NumberOfResults;
-                SearchResult = await APIServices.SearchTopic(EntryText, numberOfArticlesReturned);
+                SearchResult = await wikipediaService.SearchTopic(EntryText, numberOfArticlesReturned);
                 //Set is searching to false and set the returned text and show the list
                 IsSearching = false;
                 ReturnedText = "Total Articles: " + SearchResult.Totalhits + "\n\n" + SearchResult.Items.Count + " Example Articles:";
@@ -118,7 +128,8 @@ namespace YoWiki.ViewModels
             if (SelectedItem != null)
             {
                 IsSearching = true;
-                await StorageService.SaveHTMLFileToStorage(SelectedItem.Title);
+                // Download HTML for this article before saving it to storage
+                localArticlesService.SaveHTMLFileToStorage(SelectedItem.Title, SelectedItem.Title);
                 IsSearching = false;
                 await Shell.Current.DisplayAlert("Article Added", $"Article {SelectedItem.Title} has been downloaded and added to your library!", "Cool!");
             }
@@ -142,9 +153,9 @@ namespace YoWiki.ViewModels
 
                     //Set the start time and get all the names of the articles to be downloaded, then log
                     DateTime startTime = DateTime.Now;
-                    List<string> names = await APIServices.GetAllNamesFromSearch(EntryText, SearchResult.Totalhits);
-                    List<string> savedNames = await StorageService.GetNamesOfSavedArticles();
-                    List<string> namesToDownload = names.Where(n => !savedNames.Contains(HTMLHandler.ReplaceColons(n))).ToList();
+                    List<string> names = await wikipediaService.GetAllNamesFromSearch(EntryText, SearchResult.Totalhits);
+                    List<string> savedNames = localArticlesService.GetNamesOfSavedArticles();
+                    List<string> namesToDownload = names.Where(n => !savedNames.Contains(hTMLService.ReplaceColons(n))).ToList();
                     Debug.WriteLine("Time to get Names (Seconds): " + GetMilliSecondsSinceStart(startTime));
 
                     //Actually download all the articles
@@ -240,11 +251,12 @@ namespace YoWiki.ViewModels
 
                 //Set the start time for downloading and download the article with name names[i]
                 DateTime timeStartDownload = DateTime.Now;
-                await StorageService.SaveHTMLFileToStorage(names[i]);
+                // Download text first
+                localArticlesService.SaveHTMLFileToStorage(names[i], "");
 
                 //Set the start time and process the HTML text from article
                 DateTime timeStartClean = DateTime.Now;
-                await HTMLHandler.CleanHTMLFile(names[i]);
+                await hTMLService.CleanHTMLFile(names[i]);
 
                 //Get the time spent for each of the processes, and to total. And then log it
                 double timeSpentDownloading = (timeStartClean - timeStartDownload).TotalMilliseconds;
@@ -266,7 +278,7 @@ namespace YoWiki.ViewModels
         private void SetDownloadAndProcessingAverages(double totalTime)
         {
             //If there have been no entries into this yet, set the average equal to the time spent and the number of entries to 1
-            if (Settings.AverageDownloadAndProcessingTimePerFile == 1)
+            if (Math.Abs(Settings.AverageDownloadAndProcessingTimePerFile - 1) < 0.001)
             {
                 Settings.AverageDownloadAndProcessingTimePerFile = totalTime;
                 Settings.NumberOfEntriesInAverageDownloadTime = 1;

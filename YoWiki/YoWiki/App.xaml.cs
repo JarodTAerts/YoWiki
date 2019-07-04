@@ -1,7 +1,10 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using YoWiki.Accessors;
+using YoWiki.Accessors.Interfaces;
 using YoWiki.Services;
+using YoWiki.Services.Interfaces;
 using YoWiki.Views;
 
 namespace YoWiki
@@ -13,7 +16,13 @@ namespace YoWiki
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
+            // Register dependency injection stuff
+            DependencyService.Register<IStorageAccessor, StorageAccessor>();
+            DependencyService.Register<IWikipediaAccessor, WikipediaAccessor>();
+            DependencyService.Register<IHTMLService, HTMLService>();
+            DependencyService.Register<ILocalArticlesService, LocalArticleService>();
+            DependencyService.Register<IWikipediaService, WikipediaService>();
+
             MainPage = new AppShell();
         }
 

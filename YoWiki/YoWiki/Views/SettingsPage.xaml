@@ -4,7 +4,8 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="YoWiki.Views.SettingsPage">
+             x:Class="YoWiki.Views.SettingsPage"
+             Title="YoWiki">
 
     <ContentView>
         <StackLayout BackgroundColor="WhiteSmoke" Padding="15" Spacing="10">
@@ -13,7 +14,7 @@
                 <Label Text="Download over Cellular: " VerticalOptions="CenterAndExpand"/>
                 <Switch x:Name="CellDownloadSwitch" VerticalOptions="CenterAndExpand" IsToggled="{Binding DownloadOverCeullular}"/>
             </StackLayout>
-
+            
             <StackLayout Orientation="Horizontal">
                 <Label Text="Download Images: " VerticalOptions="CenterAndExpand"/>
                 <Switch x:Name="DownloadImagesSwitch" VerticalOptions="CenterAndExpand" IsToggled="{Binding DownloadImages}"/>

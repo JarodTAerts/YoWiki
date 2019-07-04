@@ -5,12 +5,15 @@ using System.Linq;
 using System.Text;
 using Xamarin.Forms;
 using YoWiki.Services;
+using YoWiki.Services.Interfaces;
 
 namespace YoWiki.ViewModels
 {
     class BrowseViewModel : BaseViewModel
     {
         #region Properties and Bindings
+        private ILocalArticlesService localArticlesService;
+
         private List<string> _savedArticles;
         public List<string> SavedArticles
         {
@@ -75,6 +78,9 @@ namespace YoWiki.ViewModels
         #region Constructor
         public BrowseViewModel()
         {
+            this.localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
+
+            Title = "Browse";
             //Set values to what they should be when the page opens
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             SavedArticles = new List<string>();
@@ -91,7 +97,7 @@ namespace YoWiki.ViewModels
         /// <summary>
         /// Function to handle event when an item in the list is selected
         /// </summary>
-        private async void OnSelectedItemChanged()
+        private void OnSelectedItemChanged()
         {
             ////If the selected item is not null then open the view article page and send the title you selected as a parameter
             //if (SelectedItem != null)
@@ -116,7 +122,7 @@ namespace YoWiki.ViewModels
         #endregion
 
         #region Overrides
-        public async void OnNavigatedTo()
+        public void OnNavigatedTo()
         {
             //When navigated to make sure no item is selected and set is searching so the activity monitor shows up
             SelectedItem = null;
@@ -125,7 +131,7 @@ namespace YoWiki.ViewModels
                 IsSearching = true;
                 //Get all the names of the articles and put them into the all articles list
                 //Then set Saved articles to all articles so they are all displayed to start
-                AllSavedArticles = await StorageService.GetNamesOfSavedArticles();
+                AllSavedArticles = localArticlesService.GetNamesOfSavedArticles();
                 SavedArticles = AllSavedArticles;
                 NumbersText = "Number of Articles: " + SavedArticles.Count;
                 //Once that is all done then make the activity monitor go away

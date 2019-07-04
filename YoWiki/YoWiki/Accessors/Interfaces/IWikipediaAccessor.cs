@@ -7,7 +7,7 @@ namespace YoWiki.Accessors.Interfaces
 {
     public interface IWikipediaAccessor
     {
-        Task<WikipediaSearchResult> SearchTopic(string search, int mumExampleArticles);
+        Task<WikipediaSearchResult> SearchTopic(string search, int numExampleArticles);
 
         Task<List<string>> GetAllNamesFromSearch(string search, int totalHits);
 

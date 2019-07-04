@@ -4,12 +4,15 @@ using System.Diagnostics;
 using System.Text;
 using Xamarin.Forms;
 using YoWiki.Services;
+using YoWiki.Services.Interfaces;
 
 namespace YoWiki.ViewModels
 {
     class SettingsViewModel : BaseViewModel
     {
         #region Properties and Bindings
+        private readonly ILocalArticlesService localArticlesService;
+
         //private IPageDialogService _dialogService;
 
         private string _pickedItemNumber;
@@ -43,6 +46,8 @@ namespace YoWiki.ViewModels
         #region Constructor
         public SettingsViewModel()
         {
+            this.localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
+
             //Set the UI elements to the values stored in settings
             PickedItemNumber = Settings.NumberOfResults.ToString();
             DownloadOverCeullular = Settings.DownloadOverCell;
@@ -58,12 +63,12 @@ namespace YoWiki.ViewModels
         /// <summary>
         /// Function that sends you back to the start page when you press the back button at the bottom
         /// </summary>
-        private async void OnBackButton()
+        private void OnBackButton()
         {
             //await NavigationService.GoBackAsync();
         }
 
-        private async void OnAboutYoWiki()
+        private void OnAboutYoWiki()
         {
             //await NavigationService.NavigateAsync("AboutAppPage");
         }
@@ -99,10 +104,10 @@ namespace YoWiki.ViewModels
         /// <summary>
         /// Function to handle when you press the clear all saved articles button
         /// </summary>
-        private async void OnClearArticles()
+        private void OnClearArticles()
         {
             //TODO: Make a dialog that makes sure they user wants to clear all the articles before we clear them
-            await StorageService.ClearSavedArticles();
+            localArticlesService.ClearSavedArticles();
             //await _dialogService.DisplayAlertAsync("Articles Cleared", "All articles from your local library.", "Ok");
         }
         #endregion
