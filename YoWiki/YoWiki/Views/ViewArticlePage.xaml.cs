@@ -9,12 +9,15 @@ namespace YoWiki.Views
     {
         public Command GoBackCommand;
 
-        public ViewArticlePage(WebViewSource webViewSource)
+        public ViewArticlePage(WebViewSource webViewSource, string actionText, Command actionCommand)
         {
             InitializeComponent();
             webView.Source = webViewSource;
             GoBackCommand = new Command(GoBack);
             backButton.Command = GoBackCommand;
+
+            actionButton.Text = actionText;
+            actionButton.Command = actionCommand;
         }
 
         public ViewArticlePage()

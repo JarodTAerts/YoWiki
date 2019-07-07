@@ -35,6 +35,8 @@ namespace YoWiki.ViewModels
             set { SetProperty(ref _selectedItem, value); OnSelectedItemChanged(); }
         }
 
+        private string currentArticleTitle;
+        private string currentArticleText;
 
         private string _returnedText;
         public string ReturnedText
@@ -68,6 +70,7 @@ namespace YoWiki.ViewModels
         #region Commands
         public Command SearchButtonClickedCommand { get; set; }
         public Command DownloadAllArticlesCommand { get; set; }
+        public Command DownloadArticleCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -82,6 +85,7 @@ namespace YoWiki.ViewModels
 
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             DownloadAllArticlesCommand = new Command(OnDownloadAllClicked);
+            DownloadArticleCommand = new Command(DownloadArticle);
             ResultsReturned = false;
             ReturnedText = "Search any topic you are interested in to get some results.";
             IsBusy = false;
@@ -126,17 +130,21 @@ namespace YoWiki.ViewModels
             if (SelectedItem != null)
             {
                 IsBusy = true;
-                string articleTitle = SelectedItem.Title;
+                currentArticleTitle = SelectedItem.Title;
                 SelectedItem = null;
                 // Download HTML for this article before saving it to storage
-                string articleHtml = await wikipediaService.DownloadArticleHTML(articleTitle);
-                WebViewSource webViewSource= new HtmlWebViewSource { Html=articleHtml };
-                //await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource)));
+                currentArticleText = await wikipediaService.DownloadArticleHTML(currentArticleTitle);
+                WebViewSource webViewSource= new HtmlWebViewSource { Html=currentArticleText };
+                await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Save", DownloadArticleCommand)));
 
-                localArticlesService.SaveHTMLFileToStorage(articleTitle, articleHtml);
                 IsBusy = false;
-                //await Shell.Current.DisplayAlert("Article Added", $"Article {SelectedItem.Title} has been downloaded and added to your library!", "Cool!");
             }
+        }
+
+        private async void DownloadArticle()
+        {
+            localArticlesService.SaveHTMLFileToStorage(currentArticleTitle, currentArticleText);
+            await SendAlertOrNotification("Article Downloaded", $"Article {currentArticleTitle} has been downloaded and added to your library!", "Cool!");
         }
 
         /// <summary>

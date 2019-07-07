@@ -63,10 +63,13 @@ namespace YoWiki.ViewModels
             get => _resultsReturned;
             set => SetProperty(ref _resultsReturned, value);
         }
+
+        private string currentArticleTitle;
         #endregion
 
         #region Commands
         public Command SearchButtonClickedCommand { get; set; }
+        public Command DeleteArticleCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -77,6 +80,7 @@ namespace YoWiki.ViewModels
             Title = "Browse";
             //Set values to what they should be when the page opens
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
+            DeleteArticleCommand = new Command(DeleteArticle);
             SavedArticles = new List<string>();
             ResultsReturned = false;
             MessageText = "Search your local library to read articles.";
@@ -95,12 +99,12 @@ namespace YoWiki.ViewModels
             if (SelectedItem != null)
             {
                 IsBusy = true;
-                string articleTitle = SelectedItem;
+                currentArticleTitle = SelectedItem;
                 SelectedItem = null;
                 // Download HTML for this article before saving it to storage
-                string articleHtml = localArticlesService.GetHTMLTextFromFile(articleTitle);
+                string articleHtml = localArticlesService.GetHTMLTextFromFile(currentArticleTitle);
                 WebViewSource webViewSource = new HtmlWebViewSource { Html = articleHtml };
-                Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource)));
+                Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Delete", DeleteArticleCommand)));
                 IsBusy = false;
             }
         }
@@ -113,6 +117,12 @@ namespace YoWiki.ViewModels
             //Filter the articles based on the search that you entered
             SavedArticles = AllSavedArticles.Where(a => a.ToUpper().Contains(EntryText.ToUpper())).ToList();
             NumbersText = "Number of Articles: " + SavedArticles.Count;
+        }
+
+        private void DeleteArticle()
+        {
+            localArticlesService.DeleteArticle(currentArticleTitle);
+            Shell.Current.DisplayAlert("Article Deleted", $"Article {currentArticleTitle} was deleted from local library.", "Ight");
         }
         #endregion
 

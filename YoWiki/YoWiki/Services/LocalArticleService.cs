@@ -24,6 +24,12 @@ namespace YoWiki.Services
             storageAccessor.DeleteDirectory(storagePath);
         }
 
+        public void DeleteArticle(string title)
+        {
+            string fileName = Path.Combine(storagePath, $"{title}.html");
+            File.Delete(fileName);
+        }
+
         public string GetHTMLTextFromFile(string title)
         {
             //Get the path of the file and get all the text

@@ -12,5 +12,7 @@ namespace YoWiki.Services.Interfaces
         List<string> GetNamesOfSavedArticles();
 
         void ClearSavedArticles();
+
+        void DeleteArticle(string title);
     }
 }
