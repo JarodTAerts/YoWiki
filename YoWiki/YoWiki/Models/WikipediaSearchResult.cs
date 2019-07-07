@@ -13,7 +13,7 @@ namespace YoWiki.Models
         public int Totalhits { get; set; }
 
         //List of example articles returned
-        public List<WikipediaSearchItem> Items { get; set; }
+        public List<WikipediaSearchItem> Items { get; set; } = new List<WikipediaSearchItem>();
 
         public override string ToString()
         {

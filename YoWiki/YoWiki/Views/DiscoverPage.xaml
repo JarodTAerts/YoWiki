@@ -11,25 +11,29 @@
     <ContentPage.BindingContext>
         <local:DiscoverViewModel />
     </ContentPage.BindingContext>
-
-    <ContentView BackgroundColor="WhiteSmoke">
-        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
+    
+    <AbsoluteLayout>
+    
+        <ActivityIndicator AbsoluteLayout.LayoutBounds="0.5,0.5,0.25,0.25" AbsoluteLayout.LayoutFlags="All" IsRunning="{Binding IsBusy}"/>
+        
+        <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
             <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
-            <Button Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}"
-                    BackgroundColor="Blue" TextColor="WhiteSmoke" CornerRadius="15"/>
+            <Button Style="{StaticResource BaseButtonStyle}" Text="Search" HorizontalOptions="FillAndExpand" 
+                    VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}"/>
 
 
             <ScrollView VerticalOptions="StartAndExpand">
-                <Label Text="{Binding ReturnedText}" TextColor="Black"/>
+                <Label Text="{Binding ReturnedText}" TextColor="{StaticResource PrimaryDark}"/>
             </ScrollView>
 
-            <ListView ItemsSource="{Binding SearchResult.Items}" IsVisible="{Binding ResultsReturned}" 
-                          BackgroundColor="Red" HasUnevenRows="True" SelectedItem="{Binding SelectedItem}">
+            <ListView x:Name="resultsList" ItemsSource="{Binding SearchResult.Items}" IsVisible="{Binding ResultsReturned}" 
+                          BackgroundColor="{StaticResource BackgroundLight}" HasUnevenRows="True" SelectedItem="{Binding SelectedItem}"
+                      SeparatorVisibility="None" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Frame HasShadow="True" BackgroundColor="White">
+                            <Frame HasShadow="false" BackgroundColor="White" Margin="5" CornerRadius="15">
                                 <StackLayout>
                                     <StackLayout Orientation="Horizontal">
                                         <Label Text="Title: " FontAttributes="Bold" MinimumWidthRequest="80"/>
@@ -49,9 +53,9 @@
                 </ListView.ItemTemplate>
             </ListView>
             <StackLayout IsVisible="{Binding ResultsReturned}" VerticalOptions="FillAndExpand">
-                <Button Text="Download and add to your Library" TextColor="WhiteSmoke" BackgroundColor="CornflowerBlue" Command="{Binding DownloadAllArticlesCommand}" VerticalOptions="FillAndExpand"/>
+                <Button Style="{StaticResource BaseButtonStyle}" Text="Download and add to your Library" Command="{Binding DownloadAllArticlesCommand}" VerticalOptions="FillAndExpand"/>
             </StackLayout>
         </StackLayout>
-    </ContentView>
-
+        
+    </AbsoluteLayout>
 </ContentPage>

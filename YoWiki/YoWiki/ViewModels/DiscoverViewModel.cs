@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using YoWiki.Models;
 using YoWiki.Services;
 using YoWiki.Services.Interfaces;
+using YoWiki.Views;
 
 namespace YoWiki.ViewModels
 {
@@ -55,13 +56,6 @@ namespace YoWiki.ViewModels
             set => SetProperty(ref _resultsReturned, value);
         }
 
-        private bool _isSearching;
-        public bool IsSearching
-        {
-            get => _isSearching;
-            set => SetProperty(ref _isSearching, value);
-        }
-
         private double _barProgress;
         public double BarProgress
         {
@@ -88,7 +82,7 @@ namespace YoWiki.ViewModels
             DownloadAllArticlesCommand = new Command(OnDownloadAllClicked);
             ResultsReturned = false;
             ReturnedText = "Search any topic you are interested in to get some results.";
-            IsSearching = false;
+            IsBusy = false;
         }
         #endregion
 
@@ -96,16 +90,18 @@ namespace YoWiki.ViewModels
         /// <summary>
         /// Function to handle when the search button is clicked
         /// </summary>
-        private async void OnSearchButtonClicked()
+        private async Task OnSearchButtonClicked()
         {
             try
             {
+                ResultsReturned = false;
+                ReturnedText = "Searching...";
                 //Set is searching to true, get the number of articles to get as examples and call function to search from APIService
-                IsSearching = true;
+                IsBusy = true;
                 int numberOfArticlesReturned = Settings.NumberOfResults;
                 SearchResult = await wikipediaService.SearchTopic(EntryText, numberOfArticlesReturned);
                 //Set is searching to false and set the returned text and show the list
-                IsSearching = false;
+                IsBusy = false;
                 ReturnedText = "Total Articles: " + SearchResult.Totalhits + "\n\n" + SearchResult.Items.Count + " Example Articles:";
                 ResultsReturned = true;
             }
@@ -113,7 +109,7 @@ namespace YoWiki.ViewModels
             {
                 //If there is an exception, probably due to Internet connectivity then let them know and stop searching
                 ReturnedText = "Results could not be loaded. Internet connection is required for this functionality, please check your connection.";
-                IsSearching = false;
+                IsBusy = false;
                 ResultsReturned = false;
             }
         }
@@ -122,23 +118,27 @@ namespace YoWiki.ViewModels
         /// Function to handle when an item is selected from the list. If one item is selected then it will be downloaded to the library
         /// This should probably be changed to displaying the article and offering a download button. But who knows?
         /// </summary>
-        private async void OnSelectedItemChanged()
+        private async Task OnSelectedItemChanged()
         {
             //If the item you selected is not null then use the storage service to save that article to storage
             if (SelectedItem != null)
             {
-                IsSearching = true;
+                IsBusy = true;
                 // Download HTML for this article before saving it to storage
-                localArticlesService.SaveHTMLFileToStorage(SelectedItem.Title, SelectedItem.Title);
-                IsSearching = false;
-                await Shell.Current.DisplayAlert("Article Added", $"Article {SelectedItem.Title} has been downloaded and added to your library!", "Cool!");
+                string articleHtml = await wikipediaService.DownloadArticleHTML(SelectedItem.Title);
+                WebViewSource webViewSource= new HtmlWebViewSource { Html=articleHtml };
+                await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource)));
+
+                //localArticlesService.SaveHTMLFileToStorage(SelectedItem.Title, SelectedItem.Title);
+                IsBusy = false;
+                //await Shell.Current.DisplayAlert("Article Added", $"Article {SelectedItem.Title} has been downloaded and added to your library!", "Cool!");
             }
         }
 
         /// <summary>
         /// Function to handle when the download all articles button is clicked
         /// </summary>
-        private async void OnDownloadAllClicked()
+        private async Task OnDownloadAllClicked()
         {
             if (SearchResult.Items != null)
             {
@@ -148,7 +148,7 @@ namespace YoWiki.ViewModels
                     await SendAlertOrNotification("Downloading your articles:", "The articles will now be downloaded. You can leave the app. A notification will be sent when downloading is finished." +
                         "\n Only articles that you have not already saved will be downloaded to save time.", "Okay");
                     //Start activity indicator and Let them know what is happening
-                    IsSearching = true;
+                    IsBusy = true;
                     ReturnedText = "Fetching the names of all articles from Wikipedia.";
 
                     //Set the start time and get all the names of the articles to be downloaded, then log
@@ -162,7 +162,7 @@ namespace YoWiki.ViewModels
                     await DownloadAllArticlesFromList(namesToDownload);
 
                     //Stop the activity indicator, set the returned text with some info and send an alert
-                    IsSearching = false;
+                    IsBusy = false;
                     ReturnedText = "Downloaded " + names.Count + " Articles. In " + GetTimeAddOnForEstimate(GetMilliSecondsSinceStart(startTime)) + ".";
                     await SendAlertOrNotification("Articles Added", names.Count + " articles have been downloaded and added to your library.", "Okay");
                 }
