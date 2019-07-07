@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,7 +78,8 @@ namespace YoWiki.ViewModels
             this.wikipediaService = DependencyService.Resolve<IWikipediaService>();
 
             Title = "Discover";
-            //Set properties to what they need to the list doesn't show until results are loaded and set search text
+            EntryText = "Nebraska"; // Just for testing
+
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             DownloadAllArticlesCommand = new Command(OnDownloadAllClicked);
             ResultsReturned = false;
@@ -90,7 +92,7 @@ namespace YoWiki.ViewModels
         /// <summary>
         /// Function to handle when the search button is clicked
         /// </summary>
-        private async Task OnSearchButtonClicked()
+        private async void OnSearchButtonClicked()
         {
             try
             {
@@ -124,12 +126,14 @@ namespace YoWiki.ViewModels
             if (SelectedItem != null)
             {
                 IsBusy = true;
+                string articleTitle = SelectedItem.Title;
+                SelectedItem = null;
                 // Download HTML for this article before saving it to storage
-                string articleHtml = await wikipediaService.DownloadArticleHTML(SelectedItem.Title);
+                string articleHtml = await wikipediaService.DownloadArticleHTML(articleTitle);
                 WebViewSource webViewSource= new HtmlWebViewSource { Html=articleHtml };
-                await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource)));
+                //await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource)));
 
-                //localArticlesService.SaveHTMLFileToStorage(SelectedItem.Title, SelectedItem.Title);
+                localArticlesService.SaveHTMLFileToStorage(articleTitle, articleHtml);
                 IsBusy = false;
                 //await Shell.Current.DisplayAlert("Article Added", $"Article {SelectedItem.Title} has been downloaded and added to your library!", "Cool!");
             }
@@ -138,7 +142,7 @@ namespace YoWiki.ViewModels
         /// <summary>
         /// Function to handle when the download all articles button is clicked
         /// </summary>
-        private async Task OnDownloadAllClicked()
+        private async void OnDownloadAllClicked()
         {
             if (SearchResult.Items != null)
             {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using YoWiki.ViewModels;
 
 namespace YoWiki.Views
 {
@@ -15,6 +16,13 @@ namespace YoWiki.Views
         public BrowsePage()
         {
             InitializeComponent();
+        }
+
+        protected override void OnAppearing()
+        {
+            var viewModel = (BrowseViewModel)BindingContext;
+            viewModel.LoadLocalArticles();
+            base.OnAppearing();
         }
     }
 }

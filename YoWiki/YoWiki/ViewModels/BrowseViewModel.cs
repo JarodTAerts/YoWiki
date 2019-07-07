@@ -6,6 +6,7 @@ using System.Text;
 using Xamarin.Forms;
 using YoWiki.Services;
 using YoWiki.Services.Interfaces;
+using YoWiki.Views;
 
 namespace YoWiki.ViewModels
 {
@@ -35,11 +36,11 @@ namespace YoWiki.ViewModels
             set { SetProperty(ref _selectedItem, value); OnSelectedItemChanged(); }
         }
 
-        private string _returnedText;
-        public string ReturnedText
+        private string _messageText;
+        public string MessageText
         {
-            get => _returnedText;
-            set => SetProperty(ref _returnedText, value);
+            get => _messageText;
+            set => SetProperty(ref _messageText, value);
         }
 
         private string _numbersText;
@@ -62,13 +63,6 @@ namespace YoWiki.ViewModels
             get => _resultsReturned;
             set => SetProperty(ref _resultsReturned, value);
         }
-
-        private bool _isSearching;
-        public bool IsSearching
-        {
-            get => _isSearching;
-            set => SetProperty(ref _isSearching, value);
-        }
         #endregion
 
         #region Commands
@@ -85,11 +79,9 @@ namespace YoWiki.ViewModels
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             SavedArticles = new List<string>();
             ResultsReturned = false;
-            ReturnedText = "Search your local library to read articles.";
+            MessageText = "Search your local library to read articles.";
             EntryText = "";
-            IsSearching = false;
-
-            OnNavigatedTo();
+            IsBusy = false;
         }
         #endregion
 
@@ -99,14 +91,18 @@ namespace YoWiki.ViewModels
         /// </summary>
         private void OnSelectedItemChanged()
         {
-            ////If the selected item is not null then open the view article page and send the title you selected as a parameter
-            //if (SelectedItem != null)
-            //{
-            //    Debug.WriteLine("Selected thing changed" + SelectedItem);
-            //    var navparams = new NavigationParameters();
-            //    navparams.Add("TITLE", SelectedItem);
-            //    await NavigationService.NavigateAsync("ViewArticlePage", navparams);
-            //}
+            //If the selected item is not null then open the view article page and send the title you selected as a parameter
+            if (SelectedItem != null)
+            {
+                IsBusy = true;
+                string articleTitle = SelectedItem;
+                SelectedItem = null;
+                // Download HTML for this article before saving it to storage
+                string articleHtml = localArticlesService.GetHTMLTextFromFile(articleTitle);
+                WebViewSource webViewSource = new HtmlWebViewSource { Html = articleHtml };
+                Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource)));
+                IsBusy = false;
+            }
         }
 
         /// <summary>
@@ -114,29 +110,27 @@ namespace YoWiki.ViewModels
         /// </summary>
         private void OnSearchButtonClicked()
         {
-            Debug.WriteLine("Searched something");
             //Filter the articles based on the search that you entered
             SavedArticles = AllSavedArticles.Where(a => a.ToUpper().Contains(EntryText.ToUpper())).ToList();
             NumbersText = "Number of Articles: " + SavedArticles.Count;
         }
         #endregion
 
-        #region Overrides
-        public void OnNavigatedTo()
+        #region Helpers
+        public void LoadLocalArticles()
         {
             //When navigated to make sure no item is selected and set is searching so the activity monitor shows up
             SelectedItem = null;
-            if (SavedArticles == null || SavedArticles.Count == 0)
-            {
-                IsSearching = true;
+
+                IsBusy = true;
                 //Get all the names of the articles and put them into the all articles list
                 //Then set Saved articles to all articles so they are all displayed to start
                 AllSavedArticles = localArticlesService.GetNamesOfSavedArticles();
                 SavedArticles = AllSavedArticles;
                 NumbersText = "Number of Articles: " + SavedArticles.Count;
                 //Once that is all done then make the activity monitor go away
-                IsSearching = false;
-            }
+                IsBusy = false;
+            
             if (SavedArticles != null && SavedArticles.Count > 0)
             {
                 //If there were names of articles returned then set results returned to show the list
@@ -145,7 +139,7 @@ namespace YoWiki.ViewModels
             else
             {
                 //Otherwise let them know they dont have anything saved and dont show the list
-                ReturnedText = "It doesn't seem that you have any articles saved. Go and add download some articles in the Add to Library page.";
+                MessageText = "It doesn't seem that you have any articles saved. Go and add download some articles in the Add to Library page.";
                 ResultsReturned = false;
             }
         }

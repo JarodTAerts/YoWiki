@@ -3,23 +3,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:YoWiki.ViewModels"
              mc:Ignorable="d"
              Title="YoWiki"
              x:Class="YoWiki.Views.BrowsePage">
-
-    <ContentView BackgroundColor="WhiteSmoke">
-        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
+             
+    <ContentPage.BindingContext>
+        <local:BrowseViewModel />
+    </ContentPage.BindingContext>
+  
+    <AbsoluteLayout>
+    
+        <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
             <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
-            <Button Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}"
-                    BackgroundColor="CornflowerBlue" TextColor="WhiteSmoke" CornerRadius="15"/>
+            <Button Style="{StaticResource BaseButtonStyle}" Text="Search" HorizontalOptions="FillAndExpand" 
+                    VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}"/>
 
             <ScrollView VerticalOptions="Start">
                 <Label Text="Text from things and stuff." TextColor="Black"/>
             </ScrollView>
 
             <ListView ItemsSource="{Binding SavedArticles}" IsVisible="{Binding ResultsReturned}"
-                           HasUnevenRows="True" SelectedItem="{Binding SelectedItem}" 
+                           HasUnevenRows="True" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" 
                           SeparatorVisibility="None">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -35,6 +41,9 @@
             <Label Text="{Binding NumbersText}" IsVisible="{Binding ResultsReturned}"/>
 
         </StackLayout>
-    </ContentView>
+        
+        <ActivityIndicator AbsoluteLayout.LayoutBounds="0.5,0.5,0.25,0.25" AbsoluteLayout.LayoutFlags="All" IsRunning="{Binding IsBusy}"/>
 
+        
+        </AbsoluteLayout>
 </ContentPage>

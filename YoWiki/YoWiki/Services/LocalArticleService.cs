@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Xamarin.Forms;
 using YoWiki.Accessors.Interfaces;
 using YoWiki.Services.Interfaces;
@@ -26,7 +27,7 @@ namespace YoWiki.Services
         public string GetHTMLTextFromFile(string title)
         {
             //Get the path of the file and get all the text
-            string fileName = Path.Combine(storagePath, $"{title}.wik");
+            string fileName = Path.Combine(storagePath, $"{title}.html");
             return storageAccessor.ReadTextFromFile(fileName);
         }
 
@@ -35,15 +36,21 @@ namespace YoWiki.Services
             //Get an array of all the file names, including paths
             List<string> resultsStrings = storageAccessor.GetFileNamesInDirectory(storagePath);
 
-            //resultsStrings = resultsStrings;
+            resultsStrings = resultsStrings.Select(r => {
+                string[] splitString = r.Split('/');
+                string title = splitString[splitString.Length - 1];
+                return title.Split('.')[0];
+            }).ToList();
 
             return resultsStrings;
         }
 
         public void SaveHTMLFileToStorage(string title, string text)
         {
+            if (!Directory.Exists(storagePath))
+                Directory.CreateDirectory(storagePath);
             //Get the path of the file and get all the text
-            string fileName = Path.Combine(storagePath, $"{title}.wik");
+            string fileName = Path.Combine(storagePath, $"{title}.html");
             File.WriteAllText(fileName, text);
         }
     }

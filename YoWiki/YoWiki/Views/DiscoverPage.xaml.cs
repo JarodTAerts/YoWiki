@@ -19,13 +19,13 @@ namespace YoWiki.Views
 
         protected override void OnAppearing()
         {
-            resultsList.SelectedItem = null;
+            //resultsList.SelectedItem = null;
             base.OnAppearing();
         }
 
         protected override void OnDisappearing()
         {
-            resultsList.SelectedItem = null;
+            //resultsList.SelectedItem = null;
             base.OnDisappearing();
         }
     }
