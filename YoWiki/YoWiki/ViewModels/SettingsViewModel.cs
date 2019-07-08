@@ -104,11 +104,11 @@ namespace YoWiki.ViewModels
         /// <summary>
         /// Function to handle when you press the clear all saved articles button
         /// </summary>
-        private void OnClearArticles()
+        private async void OnClearArticles()
         {
             //TODO: Make a dialog that makes sure they user wants to clear all the articles before we clear them
             localArticlesService.ClearSavedArticles();
-            //await _dialogService.DisplayAlertAsync("Articles Cleared", "All articles from your local library.", "Ok");
+            await Shell.Current.DisplayAlert("Articles Cleared", "All articles from your local library.", "Ok");
         }
         #endregion
 

@@ -12,7 +12,7 @@
         <local:BrowseViewModel />
     </ContentPage.BindingContext>
   
-    <AbsoluteLayout>
+    <AbsoluteLayout  BackgroundColor="{StaticResource BackgroundLight}">
     
         <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
@@ -21,18 +21,20 @@
                     VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}"/>
 
             <ScrollView VerticalOptions="Start">
-                <Label Text="Text from things and stuff." TextColor="Black"/>
+                <Label Text="{Binding MessageText}" TextColor="Black"/>
             </ScrollView>
 
             <ListView ItemsSource="{Binding SavedArticles}" IsVisible="{Binding ResultsReturned}"
                            HasUnevenRows="True" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" 
-                          SeparatorVisibility="None">
+                          SeparatorVisibility="None" BackgroundColor="Transparent">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout BackgroundColor="White" Padding="10">
-                                <Label Text="{Binding .}"/>
-                            </StackLayout>
+                            <Frame HasShadow="false" BackgroundColor="White" Margin="5" CornerRadius="15">
+                                <StackLayout>
+                                    <Label Text="{Binding .}"/>
+                                </StackLayout>
+                            </Frame>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>

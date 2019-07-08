@@ -45,7 +45,7 @@ namespace YoWiki.Services
             resultsStrings = resultsStrings.Select(r => {
                 string[] splitString = r.Split('/');
                 string title = splitString[splitString.Length - 1];
-                return title.Split('.')[0];
+                return title.Split(new string[] { ".html" }, StringSplitOptions.None)[0];
             }).ToList();
 
             return resultsStrings;

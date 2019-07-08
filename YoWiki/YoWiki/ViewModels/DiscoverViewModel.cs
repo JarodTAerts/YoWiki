@@ -106,6 +106,12 @@ namespace YoWiki.ViewModels
                 IsBusy = true;
                 int numberOfArticlesReturned = Settings.NumberOfResults;
                 SearchResult = await wikipediaService.SearchTopic(EntryText, numberOfArticlesReturned);
+
+                // Clean the snippets so they are readable
+                foreach (WikipediaSearchItem w in SearchResult.Items)
+                {
+                    w.Snippet = hTMLService.SimpleHTMLStrip(w.Snippet);
+                }
                 //Set is searching to false and set the returned text and show the list
                 IsBusy = false;
                 ReturnedText = "Total Articles: " + SearchResult.Totalhits + "\n\n" + SearchResult.Items.Count + " Example Articles:";
@@ -143,7 +149,7 @@ namespace YoWiki.ViewModels
 
         private async void DownloadArticle()
         {
-            localArticlesService.SaveHTMLFileToStorage(currentArticleTitle, currentArticleText);
+            localArticlesService.SaveHTMLFileToStorage(currentArticleTitle, hTMLService.ReplaceColons(currentArticleText));
             await SendAlertOrNotification("Article Downloaded", $"Article {currentArticleTitle} has been downloaded and added to your library!", "Cool!");
         }
 
@@ -157,7 +163,7 @@ namespace YoWiki.ViewModels
                 //Because of limit in Wikipedia's API no more than 10,000 articles can be downloaded from one search query
                 if (SearchResult.Totalhits < 10000)
                 {
-                    await SendAlertOrNotification("Downloading your articles:", "The articles will now be downloaded. You can leave the app. A notification will be sent when downloading is finished." +
+                    _ = SendAlertOrNotification("Downloading your articles:", "The articles will now be downloaded. You can leave the app. A notification will be sent when downloading is finished." +
                         "\n Only articles that you have not already saved will be downloaded to save time.", "Okay");
                     //Start activity indicator and Let them know what is happening
                     IsBusy = true;
@@ -264,22 +270,17 @@ namespace YoWiki.ViewModels
                 //Set the start time for downloading and download the article with name names[i]
                 DateTime timeStartDownload = DateTime.Now;
                 // Download text first
-                localArticlesService.SaveHTMLFileToStorage(names[i], "");
 
-                //Set the start time and process the HTML text from article
-                DateTime timeStartClean = DateTime.Now;
-                await hTMLService.CleanHTMLFile(names[i]);
+                string articleText = await wikipediaService.DownloadArticleHTML(names[i]);
+
+                localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(names[i]), articleText);
 
                 //Get the time spent for each of the processes, and to total. And then log it
-                double timeSpentDownloading = (timeStartClean - timeStartDownload).TotalMilliseconds;
-                double timeSpentClean = (DateTime.Now - timeStartClean).TotalMilliseconds;
-                double totalTime = timeSpentClean + timeSpentDownloading;
+                double timeSpentDownloading = (DateTime.Now - timeStartDownload).TotalMilliseconds;
                 Debug.WriteLine("Time to Download: " + timeSpentDownloading);
-                Debug.WriteLine("Time to Process: " + timeSpentClean);
-                //TODO: Some better type of logging than just writing to console. Maybe to other file or something easier to read?
 
                 //Update the averages for more accurate predictions in the future
-                SetDownloadAndProcessingAverages(totalTime);
+                SetDownloadAndProcessingAverages(timeSpentDownloading);
             }
         }
 

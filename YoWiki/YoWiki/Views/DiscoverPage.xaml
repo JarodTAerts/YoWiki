@@ -12,7 +12,7 @@
         <local:DiscoverViewModel />
     </ContentPage.BindingContext>
     
-    <AbsoluteLayout>
+    <AbsoluteLayout BackgroundColor="{StaticResource BackgroundLight}">
             
         <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
@@ -26,7 +26,7 @@
             </ScrollView>
 
             <ListView x:Name="resultsList" ItemsSource="{Binding SearchResult.Items}" IsVisible="{Binding ResultsReturned}" 
-                          BackgroundColor="{StaticResource BackgroundLight}" HasUnevenRows="True" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                          BackgroundColor="Transparent" HasUnevenRows="True" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                       SeparatorVisibility="None" >
                 <ListView.ItemTemplate>
                     <DataTemplate>

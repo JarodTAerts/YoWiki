@@ -19,6 +19,9 @@ namespace YoWiki.Accessors
 
         public List<string> GetFileNamesInDirectory(string directoryPath)
         {
+            if (!Directory.Exists(directoryPath))
+                return new List<string>();
+
             //Get an array of all the file names, including paths
             string[] resultsStrings = Directory.GetFiles(directoryPath);
 

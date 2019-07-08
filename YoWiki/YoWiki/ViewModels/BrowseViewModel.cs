@@ -14,6 +14,7 @@ namespace YoWiki.ViewModels
     {
         #region Properties and Bindings
         private ILocalArticlesService localArticlesService;
+        private IHTMLService hTMLService;
 
         private List<string> _savedArticles;
         public List<string> SavedArticles
@@ -76,6 +77,7 @@ namespace YoWiki.ViewModels
         public BrowseViewModel()
         {
             this.localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
+            hTMLService = DependencyService.Resolve<IHTMLService>();
 
             Title = "Browse";
             //Set values to what they should be when the page opens
@@ -99,7 +101,7 @@ namespace YoWiki.ViewModels
             if (SelectedItem != null)
             {
                 IsBusy = true;
-                currentArticleTitle = SelectedItem;
+                currentArticleTitle = hTMLService.ReplaceColons(SelectedItem);
                 SelectedItem = null;
                 // Download HTML for this article before saving it to storage
                 string articleHtml = localArticlesService.GetHTMLTextFromFile(currentArticleTitle);
