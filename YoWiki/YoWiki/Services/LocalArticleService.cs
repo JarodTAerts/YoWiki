@@ -12,11 +12,11 @@ namespace YoWiki.Services
     {
         private readonly IStorageAccessor storageAccessor;
         // String that gets a path to the local storage of the device being used
-        private static string storagePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/articles";
+        private static readonly string storagePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/articles";
 
         public LocalArticleService()
         {
-            this.storageAccessor = DependencyService.Resolve<IStorageAccessor>();
+            storageAccessor = DependencyService.Resolve<IStorageAccessor>();
         }
 
         public void ClearSavedArticles()
@@ -26,22 +26,21 @@ namespace YoWiki.Services
 
         public void DeleteArticle(string title)
         {
-            string fileName = Path.Combine(storagePath, $"{title}.html");
-            File.Delete(fileName);
+            string filePath = Path.Combine(storagePath, $"{title}.html");
+            storageAccessor.DeleteFile(filePath);
         }
 
         public string GetHTMLTextFromFile(string title)
         {
-            //Get the path of the file and get all the text
             string fileName = Path.Combine(storagePath, $"{title}.html");
             return storageAccessor.ReadTextFromFile(fileName);
         }
 
         public List<string> GetNamesOfSavedArticles()
         {
-            //Get an array of all the file names, including paths
             List<string> resultsStrings = storageAccessor.GetFileNamesInDirectory(storagePath);
 
+            // Take the paths of all the files and get only the actual article names from them
             resultsStrings = resultsStrings.Select(r => {
                 string[] splitString = r.Split('/');
                 string title = splitString[splitString.Length - 1];
@@ -53,11 +52,13 @@ namespace YoWiki.Services
 
         public void SaveHTMLFileToStorage(string title, string text)
         {
+            // Make sure the directory to save the articles in exists before trying to write there
             if (!Directory.Exists(storagePath))
                 Directory.CreateDirectory(storagePath);
-            //Get the path of the file and get all the text
-            string fileName = Path.Combine(storagePath, $"{title}.html");
-            File.WriteAllText(fileName, text);
+
+            string filePath = Path.Combine(storagePath, $"{title}.html");
+
+            storageAccessor.WriteTextToFile(filePath, text);
         }
     }
 }

@@ -35,5 +35,10 @@ namespace YoWiki.Accessors.Interfaces
         /// </summary>
         /// <param name="directoryPath">Path to directory to delete</param>
         void DeleteDirectory(string directoryPath);
+
+        /// <summary>
+        /// Function to delete a specific file from storage
+        /// </summary>
+        void DeleteFile(string filePath);
     }
 }

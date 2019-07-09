@@ -8,13 +8,20 @@ namespace YoWiki.Accessors
 {
     public class StorageAccessor : IStorageAccessor
     {
-        public StorageAccessor()
-        {
-        }
-
         public void DeleteDirectory(string directoryPath)
         {
+            if (!Directory.Exists(directoryPath))
+                return;
+
             Directory.Delete(directoryPath, recursive: true);
+        }
+
+        public void DeleteFile(string filePath)
+        {
+            if (!File.Exists(filePath))
+                return;
+
+            File.Delete(filePath);
         }
 
         public List<string> GetFileNamesInDirectory(string directoryPath)

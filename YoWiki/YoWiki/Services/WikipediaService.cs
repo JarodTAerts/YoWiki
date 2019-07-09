@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using YoWiki.Accessors.Interfaces;
@@ -14,7 +13,7 @@ namespace YoWiki.Services
 
         public WikipediaService()
         {
-            this.wikipediaAccessor = DependencyService.Resolve<IWikipediaAccessor>();
+            wikipediaAccessor = DependencyService.Resolve<IWikipediaAccessor>();
         }
 
         public Task<string> DownloadArticleHTML(string title)

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Plugin.Settings;
+﻿using Plugin.Settings;
 using Plugin.Settings.Abstractions;
 
 namespace YoWiki.Services
 {
     /// <summary>
-    /// Class that handles all the settings and data that must persist from one opening to another
+    /// Class that acts as the connector between the app and the stored settings for the app
     /// </summary>
     public class Settings
     {
