@@ -21,15 +21,44 @@ namespace YoWiki.ViewModels
             set { SetProperty(ref _selectedItem, value); OnSelectedItemChanged(); }
         }
 
-        public List<string> VisibleArticles { get; set; } = new List<string>();
-        public List<string> AllSavedArticles { get; set; } = new List<string>();
-        public string MessageText { get; set; } = "Search your local library to read articles.";
-        public string NumbersText { get; set; }
-        public string EntryText { get; set; }
-        public bool ResultsReturned { get; set; } = false;
+        private List<string> _visibleArticles;
+        public List<string> VisibleArticles
+        {
+            get => _visibleArticles;
+            private set => SetProperty(ref _visibleArticles, value);
+        }
+
+        private string _messageText;
+        public string MessageText
+        {
+            get => _messageText;
+            set => SetProperty(ref _messageText, value);
+        }
+
+        private string _numbersText;
+        public string NumbersText
+        {
+            get => _numbersText;
+            set => SetProperty(ref _numbersText, value);
+        }
+
+        private string _entryText;
+        public string EntryText
+        {
+            get => _entryText;
+            set => SetProperty(ref _entryText, value);
+        }
+
+        private bool _resultsReturned;
+        public bool ResultsReturned
+        {
+            get => _resultsReturned;
+            set => SetProperty(ref _resultsReturned, value);
+        }
 
         // Private Properties
         private string currentArticleTitle;
+        private List<string> AllSavedArticles;
         #endregion
 
         #region Commands
@@ -43,6 +72,7 @@ namespace YoWiki.ViewModels
             hTMLService = DependencyService.Resolve<IHTMLService>();
 
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
+            MessageText = "Search your local library to read articles.";
         }
         #endregion
 
@@ -104,6 +134,10 @@ namespace YoWiki.ViewModels
             {
                 MessageText = "Search your local library to read articles.";
                 ResultsReturned = true;
+
+                // Re-search if there is a search in the search box
+                if (EntryText != string.Empty && EntryText != null)
+                    OnSearchButtonClicked();
             }
             else
             {

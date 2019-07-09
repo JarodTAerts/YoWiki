@@ -22,7 +22,7 @@
 
 
             <ScrollView VerticalOptions="Start">
-                <Label Text="{Binding ReturnedText}" TextColor="{StaticResource PrimaryDark}"/>
+                <Label Text="{Binding MessageText}" TextColor="{StaticResource PrimaryDark}"/>
             </ScrollView>
 
             <ListView x:Name="resultsList" ItemsSource="{Binding SearchResult.Items}" IsVisible="{Binding ResultsReturned}" 

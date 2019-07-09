@@ -27,11 +27,40 @@ namespace YoWiki.ViewModels
             set { SetProperty(ref _selectedItem, value); _ = OnSelectedItemChanged(); }
         }
 
-        public WikipediaSearchResult SearchResult { get; set; }
-        public string ReturnedText { get; set; } = "Search any topic you are interested in to get some results.";
-        public string EntryText { get; set; }
-        public bool ResultsReturned { get; set; } = false;
-        public double BarProgress { get; set; } 
+        private WikipediaSearchResult _searchResult;
+        public WikipediaSearchResult SearchResult
+        {
+            get => _searchResult;
+            set => SetProperty(ref _searchResult, value);
+        }
+
+        private string _messageText;
+        public string MessageText
+        {
+            get => _messageText;
+            set => SetProperty(ref _messageText, value);
+        }
+
+        private double _barProgress;
+        public double BarProgress
+        {
+            get => _barProgress;
+            set => SetProperty(ref _barProgress, value);
+        }
+
+        private string _entryText;
+        public string EntryText
+        {
+            get => _entryText;
+            set => SetProperty(ref _entryText, value);
+        }
+
+        private bool _resultsReturned;
+        public bool ResultsReturned
+        {
+            get => _resultsReturned;
+            set => SetProperty(ref _resultsReturned, value);
+        }
 
         // Private Properties
         private string currentArticleTitle;
@@ -51,6 +80,7 @@ namespace YoWiki.ViewModels
             wikipediaService = DependencyService.Resolve<IWikipediaService>();
 
             EntryText = "Nebraska"; // Just for testing
+            MessageText = "Search anything you are interested in to get started.";
 
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             DownloadAllArticlesCommand = new Command(OnDownloadAllClicked);
@@ -64,7 +94,7 @@ namespace YoWiki.ViewModels
         private async void OnSearchButtonClicked()
         {
             ResultsReturned = false;
-            ReturnedText = "Searching...";
+            MessageText = "Searching...";
             IsBusy = true;
             try
             {
@@ -78,13 +108,13 @@ namespace YoWiki.ViewModels
                 }
 
                 IsBusy = false;
-                ReturnedText = $"Total Articles: {SearchResult.Totalhits} \n\n {SearchResult.Items.Count} Example Articles:";
+                MessageText = $"Total Articles: {SearchResult.Totalhits} \n\n {SearchResult.Items.Count} Example Articles:";
                 ResultsReturned = true;
             }
             catch (Exception)
             {
                 // TODO: Catch different types of errors and probably give a popup instead of just a text notification
-                ReturnedText = "Results could not be loaded. Internet connection is required for this functionality, please check your connection.";
+                MessageText = "Results could not be loaded. Internet connection is required for this functionality, please check your connection.";
                 IsBusy = false;
                 ResultsReturned = false;
             }
@@ -133,7 +163,7 @@ namespace YoWiki.ViewModels
                         "\n Only articles that you have not already saved will be downloaded to save time.", "Okay");
 
                     IsBusy = true;
-                    ReturnedText = "Fetching the names of all articles from Wikipedia.";
+                    MessageText = "Fetching the names of all articles from Wikipedia.";
                     DateTime startTime = DateTime.Now;
 
                     // Figure out what articles have not been downloaded yet
@@ -146,7 +176,7 @@ namespace YoWiki.ViewModels
                     IsBusy = false;
 
                     UpdateAverageDownloadTime(GetMilliSecondsSinceStart(startTime), namesToDownload.Count);
-                    ReturnedText = $"Downloaded {names.Count} Articles. In {FormatTime(GetMilliSecondsSinceStart(startTime))}.";
+                    MessageText = $"Downloaded {names.Count} Articles. In {FormatTime(GetMilliSecondsSinceStart(startTime))}.";
                     _ = SendAlertOrNotification("Articles Added", $"{names.Count} articles have been downloaded and added to your library.", "Okay");
                 }
                 else
@@ -227,7 +257,7 @@ namespace YoWiki.ViewModels
                 int itemsLeft = articleNames.Count - i;
                 double estTime = itemsLeft * Settings.AverageDownloadTime;
                 string formattedEstTime = FormatTime(estTime);
-                ReturnedText = $"Downloading {i} out of {articleNames.Count} Articles...\nEstimated time: {formattedEstTime}";
+                MessageText = $"Downloading {i} out of {articleNames.Count} Articles...\nEstimated time: {formattedEstTime}";
 
                 string articleText = await wikipediaService.DownloadArticleHTML(articleNames[i]);
 
