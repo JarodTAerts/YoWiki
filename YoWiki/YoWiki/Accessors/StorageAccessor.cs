@@ -28,14 +28,14 @@ namespace YoWiki.Accessors
             return new List<string>(resultsStrings);
         }
 
-        public string ReadTextFromFile(string fileName)
+        public string ReadTextFromFile(string filePath)
         {
-            return File.ReadAllText(fileName);
+            return File.ReadAllText(filePath);
         }
 
-        public void WriteTextToFile(string fileName, string text)
+        public void WriteTextToFile(string filePath, string text)
         {
-            File.WriteAllText(fileName, text);
+            File.WriteAllText(filePath, text);
         }
     }
 }
