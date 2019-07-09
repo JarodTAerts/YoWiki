@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using YoWiki.Models;
@@ -16,110 +13,77 @@ namespace YoWiki.ViewModels
     class DiscoverViewModel : BaseViewModel
     {
         #region Properties and Bindings
-
+        // Services
         private readonly ILocalArticlesService localArticlesService;
         private readonly IHTMLService hTMLService;
         private readonly IWikipediaService wikipediaService;
 
-        private WikipediaSearchResult _searchResult;
-        public WikipediaSearchResult SearchResult
-        {
-            get => _searchResult;
-            set => SetProperty(ref _searchResult, value);
-        }
-
+        // Public properties
         private WikipediaSearchItem _selectedItem;
         public WikipediaSearchItem SelectedItem
         {
             get => _selectedItem;
-            set { SetProperty(ref _selectedItem, value); OnSelectedItemChanged(); }
+            // Do this weird set function so that we can call function whenever the property changes
+            set { SetProperty(ref _selectedItem, value); _ = OnSelectedItemChanged(); }
         }
 
+        public WikipediaSearchResult SearchResult { get; set; }
+        public string ReturnedText { get; set; } = "Search any topic you are interested in to get some results.";
+        public string EntryText { get; set; }
+        public bool ResultsReturned { get; set; } = false;
+        public double BarProgress { get; set; } 
+
+        // Private Properties
         private string currentArticleTitle;
         private string currentArticleText;
-
-        private string _returnedText;
-        public string ReturnedText
-        {
-            get => _returnedText;
-            set => SetProperty(ref _returnedText, value);
-        }
-
-        private string _entryText;
-        public string EntryText
-        {
-            get => _entryText;
-            set => SetProperty(ref _entryText, value);
-        }
-
-        private bool _resultsReturned;
-        public bool ResultsReturned
-        {
-            get => _resultsReturned;
-            set => SetProperty(ref _resultsReturned, value);
-        }
-
-        private double _barProgress;
-        public double BarProgress
-        {
-            get => _barProgress;
-            set => SetProperty(ref _barProgress, value);
-        }
         #endregion
 
         #region Commands
         public Command SearchButtonClickedCommand { get; set; }
         public Command DownloadAllArticlesCommand { get; set; }
-        public Command DownloadArticleCommand { get; set; }
         #endregion
 
         #region Constructor
         public DiscoverViewModel()
         {
-            this.localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
-            this.hTMLService = DependencyService.Resolve<IHTMLService>();
-            this.wikipediaService = DependencyService.Resolve<IWikipediaService>();
+            localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
+            hTMLService = DependencyService.Resolve<IHTMLService>();
+            wikipediaService = DependencyService.Resolve<IWikipediaService>();
 
-            Title = "Discover";
             EntryText = "Nebraska"; // Just for testing
 
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             DownloadAllArticlesCommand = new Command(OnDownloadAllClicked);
-            DownloadArticleCommand = new Command(DownloadArticle);
-            ResultsReturned = false;
-            ReturnedText = "Search any topic you are interested in to get some results.";
-            IsBusy = false;
         }
         #endregion
 
         #region Command Functions
         /// <summary>
-        /// Function to handle when the search button is clicked
+        /// Command function to handle functionatlity when the search button is pressed
         /// </summary>
         private async void OnSearchButtonClicked()
         {
+            ResultsReturned = false;
+            ReturnedText = "Searching...";
+            IsBusy = true;
             try
             {
-                ResultsReturned = false;
-                ReturnedText = "Searching...";
-                //Set is searching to true, get the number of articles to get as examples and call function to search from APIService
-                IsBusy = true;
                 int numberOfArticlesReturned = Settings.NumberOfResults;
                 SearchResult = await wikipediaService.SearchTopic(EntryText, numberOfArticlesReturned);
 
-                // Clean the snippets so they are readable
+                // Clean the article snippets so they don't look all htmly
                 foreach (WikipediaSearchItem w in SearchResult.Items)
                 {
                     w.Snippet = hTMLService.SimpleHTMLStrip(w.Snippet);
                 }
-                //Set is searching to false and set the returned text and show the list
+
                 IsBusy = false;
-                ReturnedText = "Total Articles: " + SearchResult.Totalhits + "\n\n" + SearchResult.Items.Count + " Example Articles:";
+                ReturnedText = $"Total Articles: {SearchResult.Totalhits} \n\n {SearchResult.Items.Count} Example Articles:";
                 ResultsReturned = true;
             }
             catch (Exception)
             {
-                //If there is an exception, probably due to Internet connectivity then let them know and stop searching
+                // TODO: Catch different types of errors and probably give a popup instead of just a text notification
                 ReturnedText = "Results could not be loaded. Internet connection is required for this functionality, please check your connection.";
                 IsBusy = false;
                 ResultsReturned = false;
@@ -127,67 +91,67 @@ namespace YoWiki.ViewModels
         }
 
         /// <summary>
-        /// Function to handle when an item is selected from the list. If one item is selected then it will be downloaded to the library
-        /// This should probably be changed to displaying the article and offering a download button. But who knows?
+        /// Command function to handle when the selected item from the list is changed
         /// </summary>
+        /// <returns></returns>
         private async Task OnSelectedItemChanged()
         {
-            //If the item you selected is not null then use the storage service to save that article to storage
             if (SelectedItem != null)
             {
                 IsBusy = true;
                 currentArticleTitle = SelectedItem.Title;
-                SelectedItem = null;
-                // Download HTML for this article before saving it to storage
+                SelectedItem = null; // Set to null so the item isn't highlighted in the list
+
                 currentArticleText = await wikipediaService.DownloadArticleHTML(currentArticleTitle);
                 WebViewSource webViewSource= new HtmlWebViewSource { Html=currentArticleText };
-                await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Save", DownloadArticleCommand)));
+                await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Save", new Command(DownloadCurrentArticle))));
 
                 IsBusy = false;
             }
         }
 
-        private async void DownloadArticle()
+        /// <summary>
+        /// Command function to download the article the user is currently viewing
+        /// </summary>
+        private void DownloadCurrentArticle()
         {
             localArticlesService.SaveHTMLFileToStorage(currentArticleTitle, hTMLService.ReplaceColons(currentArticleText));
-            await SendAlertOrNotification("Article Downloaded", $"Article {currentArticleTitle} has been downloaded and added to your library!", "Cool!");
+            _ = SendAlertOrNotification("Article Downloaded", $"Article {currentArticleTitle} has been downloaded and added to your library!", "Cool!");
         }
 
         /// <summary>
-        /// Function to handle when the download all articles button is clicked
+        /// Command function to handle when the user selects to download all the articles
         /// </summary>
         private async void OnDownloadAllClicked()
         {
             if (SearchResult.Items != null)
             {
-                //Because of limit in Wikipedia's API no more than 10,000 articles can be downloaded from one search query
+                // Make sure there are less than 10000 articles since the way we are calling the wikipedia api only allows for 10000 downloads
                 if (SearchResult.Totalhits < 10000)
                 {
                     _ = SendAlertOrNotification("Downloading your articles:", "The articles will now be downloaded. You can leave the app. A notification will be sent when downloading is finished." +
                         "\n Only articles that you have not already saved will be downloaded to save time.", "Okay");
-                    //Start activity indicator and Let them know what is happening
+
                     IsBusy = true;
                     ReturnedText = "Fetching the names of all articles from Wikipedia.";
-
-                    //Set the start time and get all the names of the articles to be downloaded, then log
                     DateTime startTime = DateTime.Now;
+
+                    // Figure out what articles have not been downloaded yet
                     List<string> names = await wikipediaService.GetAllNamesFromSearch(EntryText, SearchResult.Totalhits);
                     List<string> savedNames = localArticlesService.GetNamesOfSavedArticles();
                     List<string> namesToDownload = names.Where(n => !savedNames.Contains(hTMLService.ReplaceColons(n))).ToList();
-                    Debug.WriteLine("Time to get Names (Seconds): " + GetMilliSecondsSinceStart(startTime));
 
-                    //Actually download all the articles
                     await DownloadAllArticlesFromList(namesToDownload);
 
-                    //Stop the activity indicator, set the returned text with some info and send an alert
                     IsBusy = false;
-                    ReturnedText = "Downloaded " + names.Count + " Articles. In " + GetTimeAddOnForEstimate(GetMilliSecondsSinceStart(startTime)) + ".";
-                    await SendAlertOrNotification("Articles Added", names.Count + " articles have been downloaded and added to your library.", "Okay");
+
+                    UpdateAverageDownloadTime(GetMilliSecondsSinceStart(startTime), namesToDownload.Count);
+                    ReturnedText = $"Downloaded {names.Count} Articles. In {FormatTime(GetMilliSecondsSinceStart(startTime))}.";
+                    _ = SendAlertOrNotification("Articles Added", $"{names.Count} articles have been downloaded and added to your library.", "Okay");
                 }
                 else
                 {
-                    //If there search has more than 10,000 articles, warn them they need to make their search more specific and don't let them proceed
-                    await SendAlertOrNotification("To Many Articles", "Due to limitations with the Wikipedia API you cannot download more than 10,000 articles at once. Try adding another word to your search to narrow it. I am working on it.", "Okay");
+                    _ = SendAlertOrNotification("To Many Articles", "Due to limitations with the Wikipedia API you cannot download more than 10,000 articles at once. Try adding another word to your search to narrow it. I am working on it.", "Okay");
                 }
             }
         }
@@ -195,12 +159,13 @@ namespace YoWiki.ViewModels
 
         #region Helper Functions
         /// <summary>
-        /// Function that will send a notification if the app is in the background and an alert if in the foreground
+        /// Function to handle sending notifiactions and alerts. If the app is in background it will send notification,
+        /// if the app is in the foreground it will send an alert
         /// </summary>
-        /// <param name="title">Title of the alert or notification</param>
-        /// <param name="text">Main text of the alert or notification</param>
-        /// <param name="buttonText">Text for the dismiss button</param>
-        /// <returns></returns>
+        /// <param name="title">Title of alert or notification</param>
+        /// <param name="text">Main body text of alert or notification</param>
+        /// <param name="buttonText">Button text for alert</param>
+        /// <returns>Nothing</returns>
         private async Task SendAlertOrNotification(string title, string text, string buttonText)
         {
             // TODO: Send notification if app is in background
@@ -208,99 +173,85 @@ namespace YoWiki.ViewModels
         }
 
         /// <summary>
-        /// Function to get the text to be displayed at the end of the estimated time text on the download screen
+        /// Function to get time formatted in a user friendly way
         /// </summary>
-        /// <param name="milliseconds">Estimated time in milliseconds</param>
-        /// <returns></returns>
-        private string GetTimeAddOnForEstimate(double milliseconds)
+        /// <param name="milliseconds">Millisecond time to format</param>
+        /// <returns>String with formatted time</returns>
+        private string FormatTime(double milliseconds)
         {
-            //Set the initial string and get the amount of time in seconds, minutes, hours, and days
-            string addOn = String.Format("{0:f2} Milliseconds", milliseconds);
+            string formattedTime = string.Format("{0:f2} Milliseconds", milliseconds);
             double seconds = milliseconds / 1000;
             double minutes = seconds / 60;
             double hours = minutes / 60;
             double days = hours / 24;
 
-            //Set the string to be the one that will appear the best based on the numbering
             if (seconds > 1)
             {
-                addOn = string.Format("{0:f2} Seconds", seconds);
+                formattedTime = string.Format("{0:f2} Seconds", seconds);
             }
             if (minutes > 1)
             {
-                addOn = string.Format("{0:f2} Minutes", minutes);
+                formattedTime = string.Format("{0:f2} Minutes", minutes);
             }
             if (hours > 1)
             {
-                addOn = string.Format("{0:f2} Hours", hours);
+                formattedTime = string.Format("{0:f2} Hours", hours);
             }
             if (days > 1)
             {
-                addOn = string.Format("{0:f2} Days", days);
+                formattedTime = string.Format("{0:f2} Days", days);
             }
 
-            return addOn;
+            return formattedTime;
         }
 
         /// <summary>
-        /// Function that gets the amount of time between the start time and now in milliseconds
+        /// Function to get the number of milliseconds that have passed since a certian time
         /// </summary>
-        /// <param name="start">DateTime of the start time</param>
-        /// <returns></returns>
+        /// <param name="start">Start time to measure from</param>
+        /// <returns>Double representing the milliseconds</returns>
         private double GetMilliSecondsSinceStart(DateTime start)
         {
             return (DateTime.Now - start).TotalMilliseconds;
         }
 
         /// <summary>
-        /// Function that actually downloads the articles in a list to local storage
+        /// Function to download all the articles in a list of article names
         /// </summary>
-        /// <param name="names">String list containing the names of all the articles to be downloaded</param>
-        /// <returns></returns>
-        private async Task DownloadAllArticlesFromList(List<string> names)
+        /// <param name="articleNames">List with names of articles to download</param>
+        /// <returns>Nothing</returns>
+        private async Task DownloadAllArticlesFromList(List<string> articleNames)
         {
-            for (int i = 0; i < names.Count; i++)
+            for (int i = 0; i < articleNames.Count; i++)
             {
-                //Estimate the amount of time remaining and show that information and the progress to the user
-                int itemsLeft = names.Count - i;
-                double estTime = itemsLeft * Settings.AverageDownloadAndProcessingTimePerFile;
-                string estAddOn = GetTimeAddOnForEstimate(estTime);
-                ReturnedText = "Downloading " + i + " out of " + names.Count + " Articles...\nEstimated time: " + estAddOn;
+                int itemsLeft = articleNames.Count - i;
+                double estTime = itemsLeft * Settings.AverageDownloadTime;
+                string formattedEstTime = FormatTime(estTime);
+                ReturnedText = $"Downloading {i} out of {articleNames.Count} Articles...\nEstimated time: {formattedEstTime}";
 
-                //Set the start time for downloading and download the article with name names[i]
-                DateTime timeStartDownload = DateTime.Now;
-                // Download text first
+                string articleText = await wikipediaService.DownloadArticleHTML(articleNames[i]);
 
-                string articleText = await wikipediaService.DownloadArticleHTML(names[i]);
-
-                localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(names[i]), articleText);
-
-                //Get the time spent for each of the processes, and to total. And then log it
-                double timeSpentDownloading = (DateTime.Now - timeStartDownload).TotalMilliseconds;
-                Debug.WriteLine("Time to Download: " + timeSpentDownloading);
-
-                //Update the averages for more accurate predictions in the future
-                SetDownloadAndProcessingAverages(timeSpentDownloading);
+                localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(articleNames[i]), articleText);
             }
         }
 
         /// <summary>
-        /// Function to update or set the average time it takes to download and process a file
+        /// Function to update the average download times
         /// </summary>
-        /// <param name="totalTime">Time in milliseconds it took to download and process the last file</param>
-        private void SetDownloadAndProcessingAverages(double totalTime)
+        /// <param name="totalTime">Total time it took to download the articles</param>
+        /// <param name="numberDownloaded">Number of articles that were downloaded</param>
+        private void UpdateAverageDownloadTime(double totalTime, int numberDownloaded)
         {
-            //If there have been no entries into this yet, set the average equal to the time spent and the number of entries to 1
-            if (Math.Abs(Settings.AverageDownloadAndProcessingTimePerFile - 1) < 0.001)
+            // Check if any data is in the average download time, would be 0 if there was no data
+            if (Math.Abs(Settings.AverageDownloadTime - 1) < 0.001)
             {
-                Settings.AverageDownloadAndProcessingTimePerFile = totalTime;
-                Settings.NumberOfEntriesInAverageDownloadTime = 1;
+                Settings.AverageDownloadTime = totalTime/numberDownloaded;
+                Settings.NumberOfEntriesInAverageDownloadTime = numberDownloaded;
             }
             else
             {
-                //otherwise increase the number of entries in the average and get a new average. Maybe this should be the other way. But it works the same
-                Settings.NumberOfEntriesInAverageDownloadTime++;
-                Settings.AverageDownloadAndProcessingTimePerFile = (Settings.AverageDownloadAndProcessingTimePerFile * (Settings.NumberOfEntriesInAverageDownloadTime - 1)
+                Settings.NumberOfEntriesInAverageDownloadTime+=numberDownloaded;
+                Settings.AverageDownloadTime = (Settings.AverageDownloadTime * (Settings.NumberOfEntriesInAverageDownloadTime - numberDownloaded)
                     + totalTime) / Settings.NumberOfEntriesInAverageDownloadTime;
             }
         }

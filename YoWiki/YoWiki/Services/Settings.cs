@@ -79,7 +79,7 @@ namespace YoWiki.Services
         /// Stored data that holds the average time it takes to download and process a file
         /// Used for estimating the time to finish downloading files
         /// </summary>
-        public static double AverageDownloadAndProcessingTimePerFile
+        public static double AverageDownloadTime
         {
             get
             {

@@ -1,8 +1,4 @@
-﻿using YoWiki.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System;
 
 namespace YoWiki.Models
 {
@@ -11,16 +7,29 @@ namespace YoWiki.Models
     /// </summary>
     public class WikipediaSearchItem
     {
+        /// <summary>
+        /// Title of the article
+        /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        /// Number of words in the article
+        /// </summary>
         public int Wordcount { get; set; }
+
+        /// <summary>
+        /// Size of the article in bytes
+        /// </summary>
         public int Size { get; set; }
+
+        /// <summary>
+        /// Snippet of text from the article 
+        /// </summary>
         public string Snippet { get; set; }
+
+        /// <summary>
+        /// Date of the article
+        /// </summary>
         public DateTime Timestamp { get; set; }
-
-        public override string ToString()
-        {
-            return "\nTitle: " + Title + "\nWordCount: " + Wordcount + "\nSize: " + Size + "\nSnippet: " + Snippet + "\nTime: " + Timestamp ;
-        }
-
     }
 }

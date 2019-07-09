@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace YoWiki.Models
+﻿namespace YoWiki.Models
 {
     class Article
     {
+        /// <summary>
+        /// Title of the article
+        /// </summary>
         public string Title { get; set; }
-        //Dictionary to hold the titles of headings of different sections of the article and then text contained within it
-        //This will probably need to be changed to hold a bunch of heading objects, which could also contain heading objects to account for subheadings
-        public Dictionary<string, string> HeadingContentDictonary { get; set; }
-        //List to hold referenced articles
-        public List<string> References { get; set; }
+
+        /// <summary>
+        /// HTML text of the article that can be displayed in a webview
+        /// </summary>
+        public string Text { get; set; }
     }
 }

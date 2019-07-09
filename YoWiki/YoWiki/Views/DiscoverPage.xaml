@@ -21,13 +21,13 @@
                     VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}"/>
 
 
-            <ScrollView VerticalOptions="StartAndExpand">
+            <ScrollView VerticalOptions="Start">
                 <Label Text="{Binding ReturnedText}" TextColor="{StaticResource PrimaryDark}"/>
             </ScrollView>
 
             <ListView x:Name="resultsList" ItemsSource="{Binding SearchResult.Items}" IsVisible="{Binding ResultsReturned}" 
                           BackgroundColor="Transparent" HasUnevenRows="True" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                      SeparatorVisibility="None" >
+                      SeparatorVisibility="None" VerticalOptions="FillAndExpand">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -50,7 +50,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <StackLayout IsVisible="{Binding ResultsReturned}" VerticalOptions="FillAndExpand">
+            <StackLayout IsVisible="{Binding ResultsReturned}" VerticalOptions="End">
                 <Button Style="{StaticResource BaseButtonStyle}" Text="Download and add to your Library" Command="{Binding DownloadAllArticlesCommand}" VerticalOptions="FillAndExpand"/>
             </StackLayout>
         </StackLayout>

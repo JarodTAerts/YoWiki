@@ -1,30 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace YoWiki.Models
 {
     /// <summary>
-    /// This is a class to contain a whole wikipedia search results. Containing a whole bunch of wikipedia search items
+    /// Class to represent returned wikipedia search result that contains many example articles
     /// </summary>
     public class WikipediaSearchResult
     {
-        //Total number of articles found
+        /// <summary>
+        /// Total number of articles found in this search
+        /// </summary>
         public int Totalhits { get; set; }
 
-        //List of example articles returned
+        /// <summary>
+        /// List of example articles that can be shown in the results
+        /// </summary>
         public List<WikipediaSearchItem> Items { get; set; } = new List<WikipediaSearchItem>();
-
-        public override string ToString()
-        {
-            StringBuilder str = new StringBuilder();
-            str.Append("\nTotal Hits: " + Totalhits);
-            str.Append("\n\n" + Items.Count + " Example Results: ");
-            foreach(WikipediaSearchItem item in Items)
-            {
-                str.Append("\n"+item.ToString());
-            }
-            return str.ToString();
-        }
     }
 }

@@ -13,7 +13,7 @@
     </ContentPage.BindingContext>
     
     <ContentView>
-        <StackLayout BackgroundColor="WhiteSmoke" Padding="15" Spacing="10">
+        <StackLayout BackgroundColor="{StaticResource BackgroundLight}" Padding="15" Spacing="10">
 
             <StackLayout Orientation="Horizontal">
                 <Label Text="Download over Cellular: " VerticalOptions="CenterAndExpand"/>

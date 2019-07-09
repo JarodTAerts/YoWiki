@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using Xamarin.Forms;
 using YoWiki.Services;
 using YoWiki.Services.Interfaces;
@@ -10,10 +7,8 @@ namespace YoWiki.ViewModels
 {
     class SettingsViewModel : BaseViewModel
     {
-        #region Properties and Bindings
+        #region Properties
         private readonly ILocalArticlesService localArticlesService;
-
-        //private IPageDialogService _dialogService;
 
         private string _pickedItemNumber;
         public string PickedItemNumber
@@ -46,36 +41,25 @@ namespace YoWiki.ViewModels
         #region Constructor
         public SettingsViewModel()
         {
-            this.localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
+            localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
 
             //Set the UI elements to the values stored in settings
             PickedItemNumber = Settings.NumberOfResults.ToString();
             DownloadOverCeullular = Settings.DownloadOverCell;
             DownloadImages = Settings.DownloadImages;
-            BackButtonCommand = new Command(OnBackButton);
             ClearArticlesCommand = new Command(OnClearArticles);
             AboutYoWikiCommand = new Command(OnAboutYoWiki);
-            //_dialogService = dialog;
         }
         #endregion
 
         #region Command Functions
-        /// <summary>
-        /// Function that sends you back to the start page when you press the back button at the bottom
-        /// </summary>
-        private void OnBackButton()
-        {
-            //await NavigationService.GoBackAsync();
-        }
-
         private void OnAboutYoWiki()
         {
-            //await NavigationService.NavigateAsync("AboutAppPage");
+            // TODO: Create about page and navigate there
         }
 
         /// <summary>
-        /// Function that handles when you change the number in the picker to select how many example articles to return
-        /// Changes the stored setting to what you entered
+        /// Function to handle when user sets the number of search results examples to return
         /// </summary>
         private void OnItemNumberPickerChanged()
         {
@@ -83,8 +67,7 @@ namespace YoWiki.ViewModels
         }
 
         /// <summary>
-        /// Function to handle when you change the switch to control if you want to download images
-        /// Changes the stored setting to what you entered
+        /// Function to handle download images switch
         /// </summary>
         private void OnDownloadImagesChanged()
         {
@@ -92,23 +75,25 @@ namespace YoWiki.ViewModels
         }
 
         /// <summary>
-        /// Function to control when you change the switch to control if you want to download over cell connection
-        /// Changes the stored setting to what you entered
+        /// Function to handle download on cellular switch
         /// </summary>
         private void OnDownloadOverCellularChanged()
         {
-            Debug.WriteLine("Cellular: " + DownloadOverCeullular);
             Settings.DownloadOverCell = (DownloadOverCeullular);
         }
 
         /// <summary>
-        /// Function to handle when you press the clear all saved articles button
+        /// Function to handle when a user press the clear all saved articles button
         /// </summary>
         private async void OnClearArticles()
         {
-            //TODO: Make a dialog that makes sure they user wants to clear all the articles before we clear them
-            localArticlesService.ClearSavedArticles();
-            await Shell.Current.DisplayAlert("Articles Cleared", "All articles from your local library.", "Ok");
+            string choice = await Shell.Current.DisplayActionSheet("Are you sure you want to delete all your local articles?", "Nah", "DELETE 'UM");
+
+            if(choice == "DELETE 'UM")
+            {
+                localArticlesService.ClearSavedArticles();
+                _ = Shell.Current.DisplayAlert("Articles Cleared", "All articles from your local library.", "Ok");
+            }
         }
         #endregion
 
