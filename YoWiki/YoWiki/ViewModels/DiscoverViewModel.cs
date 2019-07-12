@@ -259,9 +259,21 @@ namespace YoWiki.ViewModels
                 string formattedEstTime = FormatTime(estTime);
                 MessageText = $"Downloading {i} out of {articleNames.Count} Articles...\nEstimated time: {formattedEstTime}";
 
-                string articleText = await wikipediaService.DownloadArticleHTML(articleNames[i]);
+                await DownloadArticle(articleNames[i]);
+            }
+        }
 
-                localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(articleNames[i]), articleText);
+        private async Task DownloadArticle(string title)
+        {
+            try
+            {
+                string articleText = await wikipediaService.DownloadArticleHTML(title);
+
+                localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(title), articleText);
+            }
+            catch
+            {
+                MessageText = "Failed";
             }
         }
 

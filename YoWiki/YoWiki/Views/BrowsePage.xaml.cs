@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using System.Threading.Tasks;
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using YoWiki.ViewModels;
 
@@ -15,7 +16,7 @@ namespace YoWiki.Views
         protected override void OnAppearing()
         {
             var viewModel = (BrowseViewModel)BindingContext;
-            viewModel.LoadLocalArticles();
+            Task.Run(()=>viewModel.LoadLocalArticles());
             base.OnAppearing();
         }
     }
