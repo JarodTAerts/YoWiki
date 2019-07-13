@@ -34,7 +34,7 @@ namespace YoWiki
             // Handle when your app starts
             AppCenter.Start("android=97b563a9-317d-491a-973b-730e19c4f7c0;" +
                   "uwp={Your UWP App secret here};" +
-                  "ios={Your iOS App secret here}",
+                  "ios=ae1bb759-7608-42f7-93b6-aaa4b83e311d;",
                   typeof(Analytics), typeof(Crashes));
         }
 
