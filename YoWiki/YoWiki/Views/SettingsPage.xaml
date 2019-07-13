@@ -29,11 +29,10 @@
                 <Label Text="Number of Returned Example Articles: " VerticalOptions="CenterAndExpand"/>
                 <Picker x:Name="NumberOfResultsPicker" SelectedItem="{Binding PickedItemNumber}" HorizontalOptions="FillAndExpand">
                     <Picker.Items>
-                        <x:String>5</x:String>
-                        <x:String>10</x:String>
                         <x:String>25</x:String>
                         <x:String>50</x:String>
                         <x:String>100</x:String>
+                        <x:String>200</x:String>
                     </Picker.Items>
                 </Picker>
             </StackLayout>

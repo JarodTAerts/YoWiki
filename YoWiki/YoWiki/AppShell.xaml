@@ -22,7 +22,7 @@
     </Shell.Resources>
     <!-- Your Pages -->
     <TabBar>
-        <Tab Title="Discover" Icon="tab_feed.png">
+        <Tab Title="Discover" Icon="search.png">
             <ShellContent ContentTemplate="{DataTemplate local:DiscoverPage}" Route="Discover" />
         </Tab>
         <Tab Title="Browse" Icon="tab_feed.png">

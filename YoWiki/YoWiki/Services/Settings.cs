@@ -49,7 +49,7 @@ namespace YoWiki.Services
         {
             get
             {
-                return AppSettings.GetValueOrDefault("NumberOfResults", 5);
+                return AppSettings.GetValueOrDefault("NumberOfResults", 25);
             }
             set
             {
