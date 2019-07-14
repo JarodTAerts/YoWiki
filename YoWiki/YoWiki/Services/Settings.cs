@@ -8,7 +8,7 @@ namespace YoWiki.Services
     /// </summary>
     public class Settings
     {
-        protected static ISettings AppSettings=CrossSettings.Current;
+        protected static ISettings AppSettings = CrossSettings.Current;
 
         /// <summary>
         /// Settings that controls whether the app will download over cellular connection 
@@ -64,7 +64,7 @@ namespace YoWiki.Services
         {
             get
             {
-                return AppSettings.GetValueOrDefault("FirstTimeOpened",true);
+                return AppSettings.GetValueOrDefault("FirstTimeOpened", true);
             }
             set
             {

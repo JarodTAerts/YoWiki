@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -43,7 +42,7 @@ namespace YoWiki.Accessors
                 string addon = $"action=query&list=search&srsearch={searchEncoded}&utf8=&format=json&srlimit=500&srwhat=text&srprop=size&sroffset={i}";
                 var jsonstr = await client.GetStringAsync(baseAPIUrl + addon);
 
-                //Create a JSON obejct with the string and get the search token and the number of hits token from it
+                //Create a JSON object with the string and get the search token and the number of hits token from it
                 JObject obj = JObject.Parse(jsonstr);
                 var token = (JArray)obj.SelectToken("query.search");
 
@@ -66,7 +65,7 @@ namespace YoWiki.Accessors
             string query = $"action=query&list=search&srsearch={searchEncoded}&utf8=&format=json&srlimit={numExampleArticles}&srwhat=text";
             var result = await client.GetStringAsync(baseAPIUrl + query);
 
-            //Create a JSON obejct with the string and get the search token and the number of hits token from it
+            //Create a JSON object with the string and get the search token and the number of hits token from it
             JObject obj = JObject.Parse(result);
             var searchItemsJson = (JArray)obj["query"]["search"]; //(JArray)obj.SelectToken("query.search");
             int numOfHits = Convert.ToInt32(obj["query"]["searchinfo"]["totalhits"]);

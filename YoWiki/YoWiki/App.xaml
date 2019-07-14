@@ -1,13 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Application xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:d="http://xamarin.com/schemas/2014/forms/design" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="YoWiki.App">
+<Application xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             mc:Ignorable="d" x:Class="YoWiki.App">
+
     <Application.Resources>
         <ResourceDictionary>
             <Color x:Key="PrimaryLight">#2196F3</Color>
             <Color x:Key="BackgroundLight">#F5F5F5</Color>
-            
+
             <Color x:Key="PrimaryDark">#333333</Color>
             <Color x:Key="AccentDark">#555555</Color>
-            
+
             <Style x:Key="BaseButtonStyle" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="{StaticResource PrimaryLight}"/>
                 <Setter Property="TextColor" Value="{StaticResource BackgroundLight}"/>

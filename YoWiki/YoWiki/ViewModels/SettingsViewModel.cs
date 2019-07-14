@@ -89,7 +89,7 @@ namespace YoWiki.ViewModels
         {
             string choice = await Shell.Current.DisplayActionSheet("Are you sure you want to delete all your local articles?", "Nah", "DELETE 'UM");
 
-            if(choice == "DELETE 'UM")
+            if (choice == "DELETE 'UM")
             {
                 localArticlesService.ClearSavedArticles();
                 _ = Shell.Current.DisplayAlert("Articles Cleared", "All articles from your local library.", "Ok");

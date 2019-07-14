@@ -1,11 +1,8 @@
-﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
+﻿using Xamarin.Forms;
 using YoWiki.Accessors;
 using YoWiki.Accessors.Interfaces;
 using YoWiki.Services;
 using YoWiki.Services.Interfaces;
-using YoWiki.Views;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;

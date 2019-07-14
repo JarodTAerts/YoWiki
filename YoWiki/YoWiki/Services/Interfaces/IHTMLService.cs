@@ -13,10 +13,10 @@
         string ReplaceColons(string input);
 
         /// <summary>
-        /// Function to strip out most html tags from html text so it is more readable
+        /// Function to strip out most HTML tags from HTML text so it is more readable
         /// </summary>
-        /// <param name="input">String to strip html tags from</param>
-        /// <returns>String without html tags</returns>
+        /// <param name="input">String to strip HTML tags from</param>
+        /// <returns>String without HTML tags</returns>
         string SimpleHTMLStrip(string input);
     }
 }

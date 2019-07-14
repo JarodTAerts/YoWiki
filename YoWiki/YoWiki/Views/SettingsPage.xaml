@@ -7,11 +7,11 @@
              mc:Ignorable="d"
              x:Class="YoWiki.Views.SettingsPage"
              Title="YoWiki">
-             
+
     <ContentPage.BindingContext>
         <local:SettingsViewModel />
     </ContentPage.BindingContext>
-    
+
     <ContentView>
         <StackLayout BackgroundColor="{StaticResource BackgroundLight}" Padding="15" Spacing="10">
 
@@ -19,7 +19,7 @@
                 <Label Text="Download over Cellular: " VerticalOptions="CenterAndExpand"/>
                 <Switch x:Name="CellDownloadSwitch" VerticalOptions="CenterAndExpand" IsToggled="{Binding DownloadOverCeullular}"/>
             </StackLayout>
-            
+
             <StackLayout Orientation="Horizontal">
                 <Label Text="Download Images: " VerticalOptions="CenterAndExpand"/>
                 <Switch x:Name="DownloadImagesSwitch" VerticalOptions="CenterAndExpand" IsToggled="{Binding DownloadImages}"/>
@@ -42,5 +42,5 @@
             <Button Style="{StaticResource BaseButtonStyle}" Padding="5" Text="About YoWiki" HorizontalOptions="CenterAndExpand" Command="{Binding AboutYoWikiCommand}"/>
         </StackLayout>
     </ContentView>
-    
+
 </ContentPage>

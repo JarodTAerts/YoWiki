@@ -16,7 +16,7 @@ namespace YoWiki.Views
         protected override void OnAppearing()
         {
             var viewModel = (BrowseViewModel)BindingContext;
-            Task.Run(()=>viewModel.LoadLocalArticles());
+            Task.Run(() => viewModel.LoadLocalArticles());
             base.OnAppearing();
         }
     }
