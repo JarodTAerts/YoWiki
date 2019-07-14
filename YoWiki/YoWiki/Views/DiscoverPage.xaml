@@ -11,9 +11,9 @@
     <ContentPage.BindingContext>
         <local:DiscoverViewModel />
     </ContentPage.BindingContext>
-    
+
     <AbsoluteLayout BackgroundColor="{StaticResource BackgroundLight}">
-            
+
         <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
             <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="{Binding EntryText}"  PlaceholderColor="LightGray"/>
@@ -54,7 +54,7 @@
                 <Button Style="{StaticResource BaseButtonStyle}" Text="Download and add to your Library" Command="{Binding DownloadAllArticlesCommand}" VerticalOptions="FillAndExpand"/>
             </StackLayout>
         </StackLayout>
-        
+
         <ActivityIndicator AbsoluteLayout.LayoutBounds="0.5,0.5,0.25,0.25" AbsoluteLayout.LayoutFlags="All" IsRunning="{Binding IsBusy}"/>
     </AbsoluteLayout>
 </ContentPage>

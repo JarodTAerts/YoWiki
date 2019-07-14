@@ -89,7 +89,7 @@ namespace YoWiki.ViewModels
 
         #region Command Functions
         /// <summary>
-        /// Command function to handle functionatlity when the search button is pressed
+        /// Command function to handle functionality when the search button is pressed
         /// </summary>
         private async void OnSearchButtonClicked()
         {
@@ -113,7 +113,7 @@ namespace YoWiki.ViewModels
             }
             catch (Exception)
             {
-                // TODO: Catch different types of errors and probably give a popup instead of just a text notification
+                // TODO: Catch different types of errors and probably give a pop up instead of just a text notification
                 MessageText = "Results could not be loaded. Internet connection is required for this functionality, please check your connection.";
                 IsBusy = false;
                 ResultsReturned = false;
@@ -133,7 +133,7 @@ namespace YoWiki.ViewModels
                 SelectedItem = null; // Set to null so the item isn't highlighted in the list
 
                 currentArticleText = await wikipediaService.DownloadArticleHTML(currentArticleTitle);
-                WebViewSource webViewSource= new HtmlWebViewSource { Html=currentArticleText };
+                WebViewSource webViewSource = new HtmlWebViewSource { Html = currentArticleText };
                 await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Save", new Command(DownloadCurrentArticle))));
 
                 IsBusy = false;
@@ -189,7 +189,7 @@ namespace YoWiki.ViewModels
 
         #region Helper Functions
         /// <summary>
-        /// Function to handle sending notifiactions and alerts. If the app is in background it will send notification,
+        /// Function to handle sending notifications and alerts. If the app is in background it will send notification,
         /// if the app is in the foreground it will send an alert
         /// </summary>
         /// <param name="title">Title of alert or notification</param>
@@ -236,7 +236,7 @@ namespace YoWiki.ViewModels
         }
 
         /// <summary>
-        /// Function to get the number of milliseconds that have passed since a certian time
+        /// Function to get the number of milliseconds that have passed since a certain time
         /// </summary>
         /// <param name="start">Start time to measure from</param>
         /// <returns>Double representing the milliseconds</returns>
@@ -287,12 +287,12 @@ namespace YoWiki.ViewModels
             // Check if any data is in the average download time, would be 0 if there was no data
             if (Math.Abs(Settings.AverageDownloadTime - 1) < 0.001)
             {
-                Settings.AverageDownloadTime = totalTime/numberDownloaded;
+                Settings.AverageDownloadTime = totalTime / numberDownloaded;
                 Settings.NumberOfEntriesInAverageDownloadTime = numberDownloaded;
             }
             else
             {
-                Settings.NumberOfEntriesInAverageDownloadTime+=numberDownloaded;
+                Settings.NumberOfEntriesInAverageDownloadTime += numberDownloaded;
                 Settings.AverageDownloadTime = (Settings.AverageDownloadTime * (Settings.NumberOfEntriesInAverageDownloadTime - numberDownloaded)
                     + totalTime) / Settings.NumberOfEntriesInAverageDownloadTime;
             }

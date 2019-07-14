@@ -1,11 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="YoWiki.Views.ViewArticlePage">
-    
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="YoWiki.Views.ViewArticlePage">
+
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="actionButton" Name="Action" Text="Action"/>
-        <ToolbarItem x:Name="backButton" Name="Back" Text="Back"/>
+        <ToolbarItem x:Name="actionButton" Text="Action"/>
+        <ToolbarItem x:Name="backButton" Text="Back"/>
     </ContentPage.ToolbarItems>
-    
+
     <ContentPage.Content>
         <WebView x:Name="webView" Source="https://www.google.com">
         </WebView>

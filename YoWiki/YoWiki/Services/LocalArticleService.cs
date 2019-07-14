@@ -41,7 +41,8 @@ namespace YoWiki.Services
             List<string> resultsStrings = storageAccessor.GetFileNamesInDirectory(storagePath);
 
             // Take the paths of all the files and get only the actual article names from them
-            resultsStrings = resultsStrings.Select(r => {
+            resultsStrings = resultsStrings.Select(r =>
+            {
                 string[] splitString = r.Split('/');
                 string title = splitString[splitString.Length - 1];
                 return title.Split(new string[] { ".html" }, StringSplitOptions.None)[0];
