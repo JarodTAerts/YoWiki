@@ -23,7 +23,9 @@
                 <Label Text="{Binding MessageText}" TextColor="Black" />
             </ScrollView>
 
-            <ListView ItemsSource="{Binding VisibleArticles}" IsVisible="{Binding ResultsReturned}" HasUnevenRows="True" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" SeparatorVisibility="None" BackgroundColor="Transparent">
+            <ListView ItemsSource="{Binding VisibleArticles}" IsVisible="{Binding ResultsReturned}" HasUnevenRows="True" 
+                      SelectedItem="{Binding SelectedItem, Mode=TwoWay}" SeparatorVisibility="None" 
+                      BackgroundColor="Transparent" CachingStrategy="RecycleElement">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

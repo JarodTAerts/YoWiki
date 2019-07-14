@@ -6,6 +6,9 @@ using YoWiki.Services.Interfaces;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using System.IO;
+using System.Reflection;
+using System.Linq;
 
 namespace YoWiki
 {

@@ -18,5 +18,12 @@
         /// <param name="input">String to strip HTML tags from</param>
         /// <returns>String without HTML tags</returns>
         string SimpleHTMLStrip(string input);
+
+        /// <summary>
+        /// Function to inject the common Wikipedia CSS into the HTML document
+        /// </summary>
+        /// <param name="htmlString">HTML string of the wikipedia article</param>
+        /// <returns>String with injected CSS</returns>
+        string InjectCSS(string htmlString);
     }
 }

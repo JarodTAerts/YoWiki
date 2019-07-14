@@ -81,7 +81,7 @@ namespace YoWiki.ViewModels
         /// <summary>
         /// Command function to handle event when an item in the list is selected
         /// </summary>
-        private void OnSelectedItemChanged()
+        private async void OnSelectedItemChanged()
         {
             if (SelectedItem != null)
             {
@@ -91,7 +91,7 @@ namespace YoWiki.ViewModels
 
                 string articleHtml = localArticlesService.GetHTMLTextFromFile(currentArticleTitle);
                 WebViewSource webViewSource = new HtmlWebViewSource { Html = articleHtml };
-                Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Delete", new Command(DeleteArticle))));
+                await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Delete", new Command(DeleteArticle))));
                 IsBusy = false;
             }
         }

@@ -14,7 +14,7 @@ namespace YoWiki.Accessors
     public class WikipediaAccessor : IWikipediaAccessor
     {
         private const string baseAPIUrl = @"https://en.wikipedia.org/w/api.php?";
-        private const string basePageUrl = @"https://en.wikipedia.org/wiki/";
+        private const string basePageUrl = @"https://en.m.wikipedia.org/wiki/";
 
         public WikipediaAccessor()
         {

@@ -108,7 +108,7 @@ namespace YoWiki.ViewModels
                 }
 
                 IsBusy = false;
-                MessageText = $"Total Articles: {SearchResult.Totalhits} \n\n {SearchResult.Items.Count} Example Articles:";
+                MessageText = $"Total Articles: {SearchResult.Totalhits} \n {SearchResult.Items.Count} Example Articles:";
                 ResultsReturned = true;
             }
             catch (Exception)
@@ -132,7 +132,8 @@ namespace YoWiki.ViewModels
                 currentArticleTitle = SelectedItem.Title;
                 SelectedItem = null; // Set to null so the item isn't highlighted in the list
 
-                currentArticleText = await wikipediaService.DownloadArticleHTML(currentArticleTitle);
+                currentArticleText = hTMLService.InjectCSS(await wikipediaService.DownloadArticleHTML(currentArticleTitle));
+
                 WebViewSource webViewSource = new HtmlWebViewSource { Html = currentArticleText };
                 await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Save", new Command(DownloadCurrentArticle))));
 
@@ -145,7 +146,7 @@ namespace YoWiki.ViewModels
         /// </summary>
         private void DownloadCurrentArticle()
         {
-            localArticlesService.SaveHTMLFileToStorage(currentArticleTitle, hTMLService.ReplaceColons(currentArticleText));
+            localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(currentArticleTitle), currentArticleText);
             _ = SendAlertOrNotification("Article Downloaded", $"Article {currentArticleTitle} has been downloaded and added to your library!", "Cool!");
         }
 
@@ -267,7 +268,7 @@ namespace YoWiki.ViewModels
         {
             try
             {
-                string articleText = await wikipediaService.DownloadArticleHTML(title);
+                string articleText = hTMLService.InjectCSS(await wikipediaService.DownloadArticleHTML(title));
 
                 localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(title), articleText);
             }
