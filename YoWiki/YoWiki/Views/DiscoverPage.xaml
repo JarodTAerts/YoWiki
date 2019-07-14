@@ -27,7 +27,7 @@
 
             <ListView x:Name="resultsList" ItemsSource="{Binding SearchResult.Items}" IsVisible="{Binding ResultsReturned}" 
                           BackgroundColor="Transparent" HasUnevenRows="True" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                      SeparatorVisibility="None" VerticalOptions="FillAndExpand">
+                      SeparatorVisibility="None" VerticalOptions="FillAndExpand" CachingStrategy="RecycleElement">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

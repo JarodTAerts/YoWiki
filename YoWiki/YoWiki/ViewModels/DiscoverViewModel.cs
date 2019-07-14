@@ -108,7 +108,7 @@ namespace YoWiki.ViewModels
                 }
 
                 IsBusy = false;
-                MessageText = $"Total Articles: {SearchResult.Totalhits} \n\n {SearchResult.Items.Count} Example Articles:";
+                MessageText = $"Total Articles: {SearchResult.Totalhits} \n {SearchResult.Items.Count} Example Articles:";
                 ResultsReturned = true;
             }
             catch (Exception)
