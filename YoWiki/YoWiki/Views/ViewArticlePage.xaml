@@ -9,7 +9,7 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <WebView x:Name="webView" Source="https://www.google.com">
+        <WebView x:Name="webView" Source="https://www.google.com" Navigating="LinkClicked">
         </WebView>
     </ContentPage.Content>
 </ContentPage>

@@ -27,5 +27,15 @@ namespace YoWiki.Views
         {
             Shell.Current.Navigation.PopModalAsync();
         }
+
+        public void LinkClicked(object sender, WebNavigatedEventArgs e)
+        {
+            return;
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
     }
 }

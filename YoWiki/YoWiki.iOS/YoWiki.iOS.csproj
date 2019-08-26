@@ -139,7 +139,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\YoWiki\YoWiki.csproj">
-      <Project>{96B0BA2C-9787-4047-BBD5-431C644140D6}</Project>
+      <Project>{2D4CAB18-B0DD-41D8-8A76-09CD40FE4DF2}</Project>
       <Name>YoWiki</Name>
     </ProjectReference>
   </ItemGroup>
