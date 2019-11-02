@@ -46,7 +46,11 @@ namespace YoWiki.ViewModels
         public string EntryText
         {
             get => _entryText;
-            set => SetProperty(ref _entryText, value);
+            set 
+            { 
+                SetProperty(ref _entryText, value);
+                OnSearchButtonClicked();
+            }
         }
 
         private bool _resultsReturned;
@@ -101,7 +105,14 @@ namespace YoWiki.ViewModels
         /// </summary>
         private void OnSearchButtonClicked()
         {
-            VisibleArticles = AllSavedArticles.Where(a => a.ToUpper().Contains(EntryText.ToUpper())).ToList();
+            if(EntryText == null)
+            {
+                VisibleArticles = AllSavedArticles;
+            }
+            else
+            {
+                VisibleArticles = AllSavedArticles.Where(a => a.ToUpper().Contains(EntryText.ToUpper())).ToList();
+            }
             NumbersText = "Number of Articles: " + VisibleArticles.Count;
         }
 

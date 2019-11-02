@@ -17,7 +17,7 @@
         <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
             <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="{Binding EntryText}" PlaceholderColor="LightGray" />
-            <Button Style="{StaticResource BaseButtonStyle}" Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}" />
+            <!--<Button Style="{StaticResource BaseButtonStyle}" Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}" />-->
 
             <ScrollView VerticalOptions="Start">
                 <Label Text="{Binding MessageText}" TextColor="Black" />
