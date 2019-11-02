@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Plugin.LocalNotification;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -200,7 +201,13 @@ namespace YoWiki.ViewModels
         {
             if (App.IsInBackground)
             {
-                // TODO: Send notification
+                var notification = new NotificationRequest
+                {
+                    NotificationId = 100,
+                    Title = title,
+                    Description = text
+                };
+                NotificationCenter.Current.Show(notification);
             }
 
             // Also send alert they can see when they get back into the app

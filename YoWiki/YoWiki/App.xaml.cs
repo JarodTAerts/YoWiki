@@ -9,6 +9,8 @@ using Microsoft.AppCenter.Crashes;
 using System.IO;
 using System.Reflection;
 using System.Linq;
+using Plugin.LocalNotification;
+using System;
 
 namespace YoWiki
 {
