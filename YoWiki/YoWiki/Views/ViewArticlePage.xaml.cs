@@ -35,6 +35,7 @@ namespace YoWiki.Views
 
         protected override bool OnBackButtonPressed()
         {
+            Shell.Current.Navigation.PopModalAsync();
             return true;
         }
     }

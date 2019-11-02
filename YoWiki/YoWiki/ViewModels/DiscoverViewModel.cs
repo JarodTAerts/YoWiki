@@ -79,7 +79,6 @@ namespace YoWiki.ViewModels
             hTMLService = DependencyService.Resolve<IHTMLService>();
             wikipediaService = DependencyService.Resolve<IWikipediaService>();
 
-            EntryText = "Nebraska"; // Just for testing
             MessageText = "Search anything you are interested in to get started.";
 
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
@@ -199,7 +198,12 @@ namespace YoWiki.ViewModels
         /// <returns>Nothing</returns>
         private async Task SendAlertOrNotification(string title, string text, string buttonText)
         {
-            // TODO: Send notification if app is in background
+            if (App.IsInBackground)
+            {
+                // TODO: Send notification
+            }
+
+            // Also send alert they can see when they get back into the app
             await Shell.Current.DisplayAlert(title, text, buttonText);
         }
 

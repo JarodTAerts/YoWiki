@@ -14,6 +14,7 @@ namespace YoWiki
 {
     public partial class App : Application
     {
+        public static bool IsInBackground;
 
         public App()
         {
@@ -36,16 +37,20 @@ namespace YoWiki
                   "uwp={Your UWP App secret here};" +
                   "ios=ae1bb759-7608-42f7-93b6-aaa4b83e311d;",
                   typeof(Analytics), typeof(Crashes));
+
+            IsInBackground = false;
         }
 
         protected override void OnSleep()
         {
             // Handle when your app sleeps
+            IsInBackground = true;
         }
 
         protected override void OnResume()
         {
             // Handle when your app resumes
+            IsInBackground = false;
         }
     }
 }
