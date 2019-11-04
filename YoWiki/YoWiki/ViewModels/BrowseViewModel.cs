@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
 using YoWiki.Services.Interfaces;
@@ -67,6 +68,7 @@ namespace YoWiki.ViewModels
 
         #region Commands
         public Command SearchButtonClickedCommand { get; set; }
+        public Command RandomButtonClickedCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -76,6 +78,7 @@ namespace YoWiki.ViewModels
             hTMLService = DependencyService.Resolve<IHTMLService>();
 
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
+            RandomButtonClickedCommand = new Command(OnRandomArticleClicked);
             MessageText = "Search your local library to read articles.";
         }
         #endregion
@@ -98,6 +101,12 @@ namespace YoWiki.ViewModels
                 await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Delete", new Command(DeleteArticle))));
                 IsBusy = false;
             }
+        }
+
+        private async void OnRandomArticleClicked()
+        {
+            var rand = new Random();
+            SelectedItem = VisibleArticles[rand.Next(VisibleArticles.Count)];
         }
 
         /// <summary>
