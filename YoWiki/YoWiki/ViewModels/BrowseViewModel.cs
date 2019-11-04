@@ -64,6 +64,7 @@ namespace YoWiki.ViewModels
         // Private Properties
         private string currentArticleTitle;
         private List<string> AllSavedArticles;
+        private Random random;
         #endregion
 
         #region Commands
@@ -80,6 +81,7 @@ namespace YoWiki.ViewModels
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             RandomButtonClickedCommand = new Command(OnRandomArticleClicked);
             MessageText = "Search your local library to read articles.";
+            random = new Random();
         }
         #endregion
 
@@ -103,10 +105,9 @@ namespace YoWiki.ViewModels
             }
         }
 
-        private async void OnRandomArticleClicked()
+        private void OnRandomArticleClicked()
         {
-            var rand = new Random();
-            SelectedItem = VisibleArticles[rand.Next(VisibleArticles.Count)];
+            EntryText = AllSavedArticles[random.Next(AllSavedArticles.Count)];
         }
 
         /// <summary>
