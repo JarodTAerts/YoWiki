@@ -163,21 +163,23 @@ namespace YoWiki.ViewModels
                     _ = SendAlertOrNotification("Downloading your articles:", "The articles will now be downloaded. You can leave the app. A notification will be sent when downloading is finished." +
                         "\n Only articles that you have not already saved will be downloaded to save time.", "Okay");
 
-                    IsBusy = true;
+                    //IsBusy = true;
                     MessageText = "Fetching the names of all articles from Wikipedia.";
-                    DateTime startTime = DateTime.Now;
+                    //DateTime startTime = DateTime.Now;
 
                     // Figure out what articles have not been downloaded yet
                     List<string> names = await wikipediaService.GetAllNamesFromSearch(EntryText, SearchResult.Totalhits);
                     List<string> savedNames = localArticlesService.GetNamesOfSavedArticles();
                     List<string> namesToDownload = names.Where(n => !savedNames.Contains(hTMLService.ReplaceColons(n))).ToList();
 
-                    await DownloadAllArticlesFromList(namesToDownload);
+                    PersistentDownloadService.AddArticlesToList(namesToDownload);
+                    
+                    //await DownloadAllArticlesFromList(namesToDownload);
 
-                    IsBusy = false;
+                    //IsBusy = false;
 
-                    UpdateAverageDownloadTime(GetMilliSecondsSinceStart(startTime), namesToDownload.Count);
-                    MessageText = $"Downloaded {names.Count} Articles. In {FormatTime(GetMilliSecondsSinceStart(startTime))}.";
+                    //UpdateAverageDownloadTime(GetMilliSecondsSinceStart(startTime), namesToDownload.Count);
+                    MessageText = $"Downloaded {names.Count} Articles."; //In {FormatTime(GetMilliSecondsSinceStart(startTime))}.";
                     _ = SendAlertOrNotification("Articles Added", $"{names.Count} articles have been downloaded and added to your library.", "Okay");
                 }
                 else

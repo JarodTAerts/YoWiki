@@ -29,6 +29,8 @@ namespace YoWiki
             DependencyService.Register<ILocalArticlesService, LocalArticleService>();
             DependencyService.Register<IWikipediaService, WikipediaService>();
 
+            PersistentDownloadService.Start();
+
             MainPage = new AppShell();
         }
 
