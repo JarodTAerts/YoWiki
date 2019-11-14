@@ -31,6 +31,7 @@ namespace YoWiki.Services
             if(settingsDownloadQueue.Count > 0)
             {
                 downloadQueue = settingsDownloadQueue;
+                totalNumArticles = Settings.TotalNumberOfArticlesToDownload;
             }
 
             // Start Consumer Function
@@ -45,6 +46,7 @@ namespace YoWiki.Services
                 totalNumArticles += articlesToAdd.Count;
             }
 
+            Settings.TotalNumberOfArticlesToDownload = totalNumArticles;
             Settings.DownloadQueue = downloadQueue;
         }
 
@@ -66,6 +68,7 @@ namespace YoWiki.Services
                         int articlesDownloaded = totalNumArticles;
                         Device.BeginInvokeOnMainThread(() => NotificationService.SendAlertOrNotification("Articles Added", $"{articlesDownloaded} articles have been downloaded and added to your library.", "Okay"));
                         totalNumArticles = 0;
+                        Settings.TotalNumberOfArticlesToDownload = totalNumArticles;
                         justDownloaded = false;
                     }
 
@@ -85,7 +88,7 @@ namespace YoWiki.Services
 
                 Settings.DownloadQueue = downloadQueue;
 
-                updateAction?.Invoke($"Downloaded {totalNumArticles - downloadQueue.Count} articles out of {totalNumArticles}.");
+                updateAction?.Invoke($"Downloading article {totalNumArticles - downloadQueue.Count} out of {totalNumArticles}.");
 
                 justDownloaded = true;
             }

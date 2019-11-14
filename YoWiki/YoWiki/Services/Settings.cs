@@ -105,6 +105,9 @@ namespace YoWiki.Services
             }
         }
 
+        /// <summary>
+        /// List of all articles that need to be downloaded by the persistent download service
+        /// </summary>
         public static List<string> DownloadQueue
         {
             get
@@ -114,6 +117,21 @@ namespace YoWiki.Services
             set
             {
                 AppSettings.AddOrUpdateValue("DownloadQueue", JsonConvert.SerializeObject(value));
+            }
+        }
+
+        /// <summary>
+        /// The total number of articles that the download service was asked to download
+        /// </summary>
+        public static int TotalNumberOfArticlesToDownload
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault("TotalNumberOfArticlesToDownload", 0);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue("TotalNumberOfArticlesToDownload", value);
             }
         }
     }
