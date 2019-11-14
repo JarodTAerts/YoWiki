@@ -84,6 +84,8 @@ namespace YoWiki.ViewModels
 
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             DownloadAllArticlesCommand = new Command(OnDownloadAllClicked);
+
+            PersistentDownloadService.SetUpdateMethod(value => MessageText = value);
         }
         #endregion
 
@@ -147,7 +149,7 @@ namespace YoWiki.ViewModels
         private void DownloadCurrentArticle()
         {
             localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(currentArticleTitle), currentArticleText);
-            _ = SendAlertOrNotification("Article Downloaded", $"Article {currentArticleTitle} has been downloaded and added to your library!", "Cool!");
+            NotificationService.SendAlertOrNotification("Article Downloaded", $"Article {currentArticleTitle} has been downloaded and added to your library!", "Cool!");
         }
 
         /// <summary>
@@ -160,62 +162,30 @@ namespace YoWiki.ViewModels
                 // Make sure there are less than 10000 articles since the way we are calling the wikipedia api only allows for 10000 downloads
                 if (SearchResult.Totalhits < 10000)
                 {
-                    _ = SendAlertOrNotification("Downloading your articles:", "The articles will now be downloaded. You can leave the app. A notification will be sent when downloading is finished." +
+                    NotificationService.SendAlertOrNotification("Downloading your articles:", "The articles will now be downloaded. You can leave the app. A notification will be sent when downloading is finished." +
                         "\n Only articles that you have not already saved will be downloaded to save time.", "Okay");
 
-                    //IsBusy = true;
+                    IsBusy = true;
                     MessageText = "Fetching the names of all articles from Wikipedia.";
-                    //DateTime startTime = DateTime.Now;
 
                     // Figure out what articles have not been downloaded yet
                     List<string> names = await wikipediaService.GetAllNamesFromSearch(EntryText, SearchResult.Totalhits);
                     List<string> savedNames = localArticlesService.GetNamesOfSavedArticles();
                     List<string> namesToDownload = names.Where(n => !savedNames.Contains(hTMLService.ReplaceColons(n))).ToList();
 
-                    PersistentDownloadService.AddArticlesToList(namesToDownload);
-                    
-                    //await DownloadAllArticlesFromList(namesToDownload);
+                    IsBusy = false;
 
-                    //IsBusy = false;
-
-                    //UpdateAverageDownloadTime(GetMilliSecondsSinceStart(startTime), namesToDownload.Count);
-                    MessageText = $"Downloaded {names.Count} Articles."; //In {FormatTime(GetMilliSecondsSinceStart(startTime))}.";
-                    _ = SendAlertOrNotification("Articles Added", $"{names.Count} articles have been downloaded and added to your library.", "Okay");
+                    PersistentDownloadService.AddArticlesToList(namesToDownload, value => MessageText = value);
                 }
                 else
                 {
-                    _ = SendAlertOrNotification("To Many Articles", "Due to limitations with the Wikipedia API you cannot download more than 10,000 articles at once. Try adding another word to your search to narrow it. I am working on it.", "Okay");
+                    NotificationService.SendAlertOrNotification("To Many Articles", "Due to limitations with the Wikipedia API you cannot download more than 10,000 articles at once. Try adding another word to your search to narrow it. I am working on it.", "Okay");
                 }
             }
         }
         #endregion
 
         #region Helper Functions
-        /// <summary>
-        /// Function to handle sending notifications and alerts. If the app is in background it will send notification,
-        /// if the app is in the foreground it will send an alert
-        /// </summary>
-        /// <param name="title">Title of alert or notification</param>
-        /// <param name="text">Main body text of alert or notification</param>
-        /// <param name="buttonText">Button text for alert</param>
-        /// <returns>Nothing</returns>
-        private async Task SendAlertOrNotification(string title, string text, string buttonText)
-        {
-            if (App.IsInBackground)
-            {
-                var notification = new NotificationRequest
-                {
-                    NotificationId = 100,
-                    Title = title,
-                    Description = text
-                };
-                NotificationCenter.Current.Show(notification);
-            }
-
-            // Also send alert they can see when they get back into the app
-            await Shell.Current.DisplayAlert(title, text, buttonText);
-        }
-
         /// <summary>
         /// Function to get time formatted in a user friendly way
         /// </summary>
