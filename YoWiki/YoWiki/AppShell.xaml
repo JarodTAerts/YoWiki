@@ -30,15 +30,6 @@
         </ResourceDictionary>
     </Shell.Resources>
 
-    <Shell.TitleView>
-        <StackLayout Orientation="Horizontal">
-            <Label Text="YoWiki" TextColor="{StaticResource BackgroundLight}" FontSize="Large" FontAttributes="Bold" HorizontalOptions="StartAndExpand" VerticalOptions="CenterAndExpand"/>
-
-            <controls:BadgedIconButton HorizontalOptions="End" VerticalOptions="CenterAndExpand" IconSource="download.png" BadgeNumber="1000" BadgeColor="Red"/>
-        </StackLayout>
-    </Shell.TitleView>
-    
-
     <!-- Your Pages -->
     <TabBar>
         <Tab Title="Discover" Icon="search.png">

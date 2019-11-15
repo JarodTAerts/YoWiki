@@ -6,6 +6,9 @@ using Xamarin.Forms;
 
 namespace YoWiki.Services
 {
+    /// <summary>
+    /// Service to send alerts and notifications to the user
+    /// </summary>
     public static class NotificationService
     {
         /// <summary>

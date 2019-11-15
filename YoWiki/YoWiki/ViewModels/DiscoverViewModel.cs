@@ -115,6 +115,7 @@ namespace YoWiki.ViewModels
             {
                 // TODO: Catch different types of errors and probably give a pop up instead of just a text notification
                 MessageText = "Results could not be loaded. Internet connection is required for this functionality, please check your connection.";
+                NotificationService.SendAlertOrNotification("Error Loading Results", MessageText, "Okay");
                 IsBusy = false;
                 ResultsReturned = false;
             }
@@ -160,13 +161,9 @@ namespace YoWiki.ViewModels
                 // Make sure there are less than 10000 articles since the way we are calling the wikipedia api only allows for 10000 downloads
                 if (SearchResult.Totalhits < 10000)
                 {
-                    NotificationService.SendAlertOrNotification("Downloading your articles:", "The articles will now be downloaded. You can leave the app. A notification will be sent when downloading is finished." +
-                        "\n Only articles that you have not already saved will be downloaded to save time.", "Okay");
-
                     IsBusy = true;
-                    MessageText = "Fetching the names of all articles from Wikipedia.";
 
-                    // Figure out what articles have not been downloaded yet
+                    // Figure out what articles have not been downloaded yet and aren't currently downloading
                     List<string> names = await wikipediaService.GetAllNamesFromSearch(EntryText, SearchResult.Totalhits);
                     List<string> savedNames = localArticlesService.GetNamesOfSavedArticles();
                     List<string> downloadingNames = PersistentDownloadService.GetStatus().ArticlesLeftToDownload;
@@ -174,13 +171,15 @@ namespace YoWiki.ViewModels
 
                     IsBusy = false;
 
-                    if(namesToDownload.Count <= 0)
+                    if (namesToDownload.Count <= 0)
                     {
-                        MessageText = "All these articles have already been downloaded.";
+                        NotificationService.SendAlertOrNotification("No New Articles", "It looks like all these articles are downloaded or are currently downloading. No new articles will be added to the queue.", "Alright");
                         return;
                     }
 
                     PersistentDownloadService.AddArticlesToList(namesToDownload);
+
+                    NotificationService.SendAlertOrNotification("Downloads Queued:", "The articles you selected have been added to the download queue. You can see the progress by entering the download center in the top right corner.", "Cool");
                 }
                 else
                 {
@@ -189,10 +188,5 @@ namespace YoWiki.ViewModels
             }
         }
         #endregion
-
-        #region Helper Functions
-
-        #endregion
-
     }
 }
