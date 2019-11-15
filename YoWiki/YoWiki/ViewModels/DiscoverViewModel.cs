@@ -175,7 +175,13 @@ namespace YoWiki.ViewModels
 
                     IsBusy = false;
 
-                    PersistentDownloadService.AddArticlesToList(namesToDownload, value => MessageText = value);
+                    if(namesToDownload.Count <= 0)
+                    {
+                        MessageText = "All these articles have already been downloaded.";
+                        return;
+                    }
+
+                    PersistentDownloadService.AddArticlesToList(namesToDownload);
                 }
                 else
                 {
@@ -186,101 +192,7 @@ namespace YoWiki.ViewModels
         #endregion
 
         #region Helper Functions
-        /// <summary>
-        /// Function to get time formatted in a user friendly way
-        /// </summary>
-        /// <param name="milliseconds">Millisecond time to format</param>
-        /// <returns>String with formatted time</returns>
-        private string FormatTime(double milliseconds)
-        {
-            string formattedTime = string.Format("{0:f2} Milliseconds", milliseconds);
-            double seconds = milliseconds / 1000;
-            double minutes = seconds / 60;
-            double hours = minutes / 60;
-            double days = hours / 24;
 
-            if (seconds > 1)
-            {
-                formattedTime = string.Format("{0:f2} Seconds", seconds);
-            }
-            if (minutes > 1)
-            {
-                formattedTime = string.Format("{0:f2} Minutes", minutes);
-            }
-            if (hours > 1)
-            {
-                formattedTime = string.Format("{0:f2} Hours", hours);
-            }
-            if (days > 1)
-            {
-                formattedTime = string.Format("{0:f2} Days", days);
-            }
-
-            return formattedTime;
-        }
-
-        /// <summary>
-        /// Function to get the number of milliseconds that have passed since a certain time
-        /// </summary>
-        /// <param name="start">Start time to measure from</param>
-        /// <returns>Double representing the milliseconds</returns>
-        private double GetMilliSecondsSinceStart(DateTime start)
-        {
-            return (DateTime.Now - start).TotalMilliseconds;
-        }
-
-        /// <summary>
-        /// Function to download all the articles in a list of article names
-        /// </summary>
-        /// <param name="articleNames">List with names of articles to download</param>
-        /// <returns>Nothing</returns>
-        private async Task DownloadAllArticlesFromList(List<string> articleNames)
-        {
-            for (int i = 0; i < articleNames.Count; i++)
-            {
-                int itemsLeft = articleNames.Count - i;
-                double estTime = itemsLeft * Settings.AverageDownloadTime;
-                string formattedEstTime = FormatTime(estTime);
-                MessageText = $"Downloading {i} out of {articleNames.Count} Articles...\nEstimated time: {formattedEstTime}";
-
-                await DownloadArticle(articleNames[i]);
-            }
-        }
-
-        private async Task DownloadArticle(string title)
-        {
-            try
-            {
-                string articleText = hTMLService.InjectCSS(await wikipediaService.DownloadArticleHTML(title));
-
-                localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(title), articleText);
-            }
-            catch
-            {
-                MessageText = "Failed";
-            }
-        }
-
-        /// <summary>
-        /// Function to update the average download times
-        /// </summary>
-        /// <param name="totalTime">Total time it took to download the articles</param>
-        /// <param name="numberDownloaded">Number of articles that were downloaded</param>
-        private void UpdateAverageDownloadTime(double totalTime, int numberDownloaded)
-        {
-            // Check if any data is in the average download time, would be 0 if there was no data
-            if (Math.Abs(Settings.AverageDownloadTime - 1) < 0.001)
-            {
-                Settings.AverageDownloadTime = totalTime / numberDownloaded;
-                Settings.NumberOfEntriesInAverageDownloadTime = numberDownloaded;
-            }
-            else
-            {
-                Settings.NumberOfEntriesInAverageDownloadTime += numberDownloaded;
-                Settings.AverageDownloadTime = (Settings.AverageDownloadTime * (Settings.NumberOfEntriesInAverageDownloadTime - numberDownloaded)
-                    + totalTime) / Settings.NumberOfEntriesInAverageDownloadTime;
-            }
-        }
         #endregion
 
     }

@@ -17,7 +17,7 @@
         <StackLayout Orientation="Horizontal">
             <Label Text="YoWiki" TextColor="{StaticResource BackgroundLight}" FontSize="Large" FontAttributes="Bold" HorizontalOptions="StartAndExpand" VerticalOptions="CenterAndExpand"/>
 
-            <controls:BadgedIconButton x:Name="BadgedIcon" HorizontalOptions="End" VerticalOptions="CenterAndExpand" IconSource="download.png" BadgeNumber="1000" BadgeColor="Red"/>
+            <controls:BadgedIconButton x:Name="BadgedIcon" HorizontalOptions="End" VerticalOptions="CenterAndExpand" IconSource="download.png" BadgeNumber="0" BadgeColor="Red"/>
         </StackLayout>
     </Shell.TitleView>
 

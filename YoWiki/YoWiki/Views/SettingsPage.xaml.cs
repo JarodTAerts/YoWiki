@@ -10,8 +10,8 @@ namespace YoWiki.Views
         public SettingsPage()
         {
             InitializeComponent();
-
             PersistentDownloadService.AddBadgeCallback(UpdateBadgeNumber);
+            UpdateBadgeNumber(PersistentDownloadService.DownloadQueue.Count);
         }
 
         public void UpdateBadgeNumber(int num)

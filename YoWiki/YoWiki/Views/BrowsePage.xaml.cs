@@ -13,6 +13,7 @@ namespace YoWiki.Views
         {
             InitializeComponent();
             PersistentDownloadService.AddBadgeCallback(UpdateBadgeNumber);
+            UpdateBadgeNumber(PersistentDownloadService.DownloadQueue.Count);
         }
 
         protected override void OnAppearing()
