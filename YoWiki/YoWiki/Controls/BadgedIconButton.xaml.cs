@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using YoWiki.Services;
+using YoWiki.Views;
 
 namespace YoWiki.Controls
 {
@@ -66,6 +67,11 @@ namespace YoWiki.Controls
         public BadgedIconButton()
         {
             InitializeComponent();
+        }
+
+        public void AddButtonEventHandler(EventHandler eventHandler)
+        {
+            TransparentIconButton.Clicked += eventHandler;
         }
     }
 }

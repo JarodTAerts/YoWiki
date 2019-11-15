@@ -54,6 +54,7 @@
     <ShellItem>
         <ShellSection>
             <ShellContent ContentTemplate="{DataTemplate local:ViewArticlePage}" Route="ViewArticle" />
+            <ShellContent ContentTemplate="{DataTemplate local:DownloadsPage}" Route="Downloads" />
         </ShellSection>
     </ShellItem>
 </Shell>

@@ -84,8 +84,6 @@ namespace YoWiki.ViewModels
 
             SearchButtonClickedCommand = new Command(OnSearchButtonClicked);
             DownloadAllArticlesCommand = new Command(OnDownloadAllClicked);
-
-            PersistentDownloadService.SetUpdateMethod(value => MessageText = value);
         }
         #endregion
 

@@ -21,6 +21,7 @@ namespace YoWiki.Views
         {
             InitializeComponent();
             GoBackCommand = new Command(GoBack);
+            backButton.Command = GoBackCommand;
         }
 
         public void GoBack()

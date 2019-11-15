@@ -12,6 +12,6 @@
     <StackLayout x:Name="LabelLayout" AbsoluteLayout.LayoutBounds="0.75,0.25,25,25" AbsoluteLayout.LayoutFlags="PositionProportional">
         <Label x:Name="ValueLabel" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" TextColor="{StaticResource BackgroundLight}" FontSize="Micro" FontAttributes="Bold" LineBreakMode="NoWrap"/>
     </StackLayout>
-
+    <Button x:Name="TransparentIconButton" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" BackgroundColor="Transparent" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand"/>
 
 </AbsoluteLayout>

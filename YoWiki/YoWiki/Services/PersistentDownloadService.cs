@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using YoWiki.Accessors.Interfaces;
+using YoWiki.Models;
 using YoWiki.Services.Interfaces;
 
 namespace YoWiki.Services
@@ -24,7 +26,7 @@ namespace YoWiki.Services
         private static IHTMLService hTMLService;
         private static ILocalArticlesService localArticlesService;
 
-        private static Action<string> updateAction;
+        private static List<Action<DownloadsStatusUpdate>> subscribedStatusCallbacks;
         private static List<Action<int>> subscribedBadgeCallbacks;
         public static void Start()
         {
@@ -33,6 +35,7 @@ namespace YoWiki.Services
             localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
             DownloadQueue = new List<string>();
             subscribedBadgeCallbacks = new List<Action<int>>();
+            subscribedStatusCallbacks = new List<Action<DownloadsStatusUpdate>>();
 
             List<string> settingsDownloadQueue = Settings.DownloadQueue;
 
@@ -52,20 +55,36 @@ namespace YoWiki.Services
             {
                 DownloadQueue.AddRange(articlesToAdd);
                 TotalNumArticles += articlesToAdd.Count;
+                Settings.TotalNumberOfArticlesToDownload = TotalNumArticles;
+                Settings.DownloadQueue = DownloadQueue;
             }
-
-            Settings.TotalNumberOfArticlesToDownload = TotalNumArticles;
-            Settings.DownloadQueue = DownloadQueue;
         }
 
-        public static void SetUpdateMethod(Action<string> action)
+        public static void AddStatusCallBack(Action<DownloadsStatusUpdate> action)
         {
-            updateAction = action;
+            subscribedStatusCallbacks.Add(action);
         }
 
         public static void AddBadgeCallback(Action<int> action)
         {
             subscribedBadgeCallbacks.Add(action);
+        }
+
+        public static DownloadsStatusUpdate GetStatus()
+        {
+
+            DownloadsStatusUpdate update;
+            lock (queueLock)
+            {
+                update = new DownloadsStatusUpdate
+                {
+                    StatusMessage = $"Downloading article {TotalNumArticles - DownloadQueue.Count} out of {TotalNumArticles}.",
+                    TotalNumArticlesToDownload = TotalNumArticles,
+                    ArticlesLeftToDownload = DownloadQueue.ToList()
+                };
+            }
+
+            return update;
         }
 
         private static void DownloadQueueConsumer()
@@ -79,7 +98,7 @@ namespace YoWiki.Services
                     {
                         if (justDownloaded)
                         {
-                            updateAction?.Invoke($"Downloaded {TotalNumArticles} articles.");
+                            UpdateStatusCallbacks();
                             UpdateBadgeCallbacks();
                             int articlesDownloaded = TotalNumArticles;
                             Device.BeginInvokeOnMainThread(() => NotificationService.SendAlertOrNotification("Articles Added", $"{articlesDownloaded} articles have been downloaded and added to your library.", "Okay"));
@@ -104,7 +123,7 @@ namespace YoWiki.Services
 
                     Settings.DownloadQueue = DownloadQueue;
 
-                    updateAction?.Invoke($"Downloading article {TotalNumArticles - DownloadQueue.Count} out of {TotalNumArticles}.");
+                    UpdateStatusCallbacks();
                     UpdateBadgeCallbacks();
 
                     justDownloaded = true;
@@ -121,6 +140,25 @@ namespace YoWiki.Services
             foreach (Action<int> action in subscribedBadgeCallbacks)
             {
                 Device.BeginInvokeOnMainThread(() => action?.Invoke(DownloadQueue.Count));
+            }
+        }
+
+        private static void UpdateStatusCallbacks()
+        {
+            DownloadsStatusUpdate update;
+            lock (queueLock)
+            {
+                update = new DownloadsStatusUpdate
+                {
+                    StatusMessage = $"Downloading article {TotalNumArticles - DownloadQueue.Count} out of {TotalNumArticles}.",
+                    TotalNumArticlesToDownload = TotalNumArticles,
+                    ArticlesLeftToDownload = DownloadQueue.ToList()
+                };
+            }
+
+            foreach (Action<DownloadsStatusUpdate> action in subscribedStatusCallbacks)
+            {
+                Device.BeginInvokeOnMainThread(() => action?.Invoke(update));
             }
         }
 
