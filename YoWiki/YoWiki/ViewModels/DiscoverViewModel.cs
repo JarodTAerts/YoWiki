@@ -169,7 +169,8 @@ namespace YoWiki.ViewModels
                     // Figure out what articles have not been downloaded yet
                     List<string> names = await wikipediaService.GetAllNamesFromSearch(EntryText, SearchResult.Totalhits);
                     List<string> savedNames = localArticlesService.GetNamesOfSavedArticles();
-                    List<string> namesToDownload = names.Where(n => !savedNames.Contains(hTMLService.ReplaceColons(n))).ToList();
+                    List<string> downloadingNames = PersistentDownloadService.GetStatus().ArticlesLeftToDownload;
+                    List<string> namesToDownload = names.Where(n => !savedNames.Contains(hTMLService.ReplaceColons(n)) && !downloadingNames.Contains(hTMLService.ReplaceColons(n))).ToList();
 
                     IsBusy = false;
 
