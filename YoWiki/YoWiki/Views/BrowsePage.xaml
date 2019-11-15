@@ -25,8 +25,10 @@
 
         <StackLayout AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Padding="10">
 
-            <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="{Binding EntryText}" PlaceholderColor="LightGray" />
-            <!--<Button Style="{StaticResource BaseButtonStyle}" Text="Search" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Command="{Binding SearchButtonClickedCommand}" />-->
+            <StackLayout Orientation="Horizontal">
+                <Entry Placeholder="Search Topic" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="{Binding EntryText}" PlaceholderColor="LightGray" />
+                <Button ImageSource="random.png" BackgroundColor="Transparent" HorizontalOptions="End" Padding="0" WidthRequest="45" Command="{Binding RandomButtonClickedCommand}"/>
+            </StackLayout>
 
             <ScrollView VerticalOptions="Start">
                 <Label Text="{Binding MessageText}" TextColor="Black" />
