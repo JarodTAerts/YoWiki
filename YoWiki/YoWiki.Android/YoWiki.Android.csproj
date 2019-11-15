@@ -119,6 +119,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
+    <AndroidResource Include="Resources\drawable\download.png" />
     <AndroidResource Include="Resources\drawable\random.png">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>

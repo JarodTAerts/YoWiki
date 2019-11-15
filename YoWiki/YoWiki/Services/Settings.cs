@@ -1,5 +1,7 @@
-﻿using Plugin.Settings;
+﻿using Newtonsoft.Json;
+using Plugin.Settings;
 using Plugin.Settings.Abstractions;
+using System.Collections.Generic;
 
 namespace YoWiki.Services
 {
@@ -100,6 +102,36 @@ namespace YoWiki.Services
             set
             {
                 AppSettings.AddOrUpdateValue("NumberOfEntriesInAverageDownloadTime", value);
+            }
+        }
+
+        /// <summary>
+        /// List of all articles that need to be downloaded by the persistent download service
+        /// </summary>
+        public static List<string> DownloadQueue
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<List<string>>(AppSettings.GetValueOrDefault("DownloadQueue", "[]"));
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue("DownloadQueue", JsonConvert.SerializeObject(value));
+            }
+        }
+
+        /// <summary>
+        /// The total number of articles that the download service was asked to download
+        /// </summary>
+        public static int TotalNumberOfArticlesToDownload
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault("TotalNumberOfArticlesToDownload", 0);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue("TotalNumberOfArticlesToDownload", value);
             }
         }
     }

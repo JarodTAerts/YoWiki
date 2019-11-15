@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:d="http://xamarin.com/schemas/2014/forms/design" 
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:local="clr-namespace:YoWiki.ViewModels" 
+             xmlns:local="clr-namespace:YoWiki.ViewModels"
+             xmlns:controls="clr-namespace:YoWiki.Controls"
              mc:Ignorable="d" 
              Title="YoWiki" 
              x:Class="YoWiki.Views.BrowsePage">
@@ -11,6 +12,14 @@
     <ContentPage.BindingContext>
         <local:BrowseViewModel />
     </ContentPage.BindingContext>
+
+    <Shell.TitleView>
+        <StackLayout Orientation="Horizontal">
+            <Label Text="YoWiki" TextColor="{StaticResource BackgroundLight}" FontSize="Large" FontAttributes="Bold" HorizontalOptions="StartAndExpand" VerticalOptions="CenterAndExpand"/>
+
+            <controls:BadgedIconButton x:Name="BadgedIcon" HorizontalOptions="End" VerticalOptions="CenterAndExpand" IconSource="download.png" BadgeNumber="0" BadgeColor="Red"/>
+        </StackLayout>
+    </Shell.TitleView>
 
     <AbsoluteLayout BackgroundColor="{StaticResource BackgroundLight}">
 

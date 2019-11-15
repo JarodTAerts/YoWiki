@@ -115,6 +115,7 @@ namespace YoWiki.ViewModels
             {
                 // TODO: Catch different types of errors and probably give a pop up instead of just a text notification
                 MessageText = "Results could not be loaded. Internet connection is required for this functionality, please check your connection.";
+                NotificationService.SendAlertOrNotification("Error Loading Results", MessageText, "Okay");
                 IsBusy = false;
                 ResultsReturned = false;
             }
@@ -147,7 +148,7 @@ namespace YoWiki.ViewModels
         private void DownloadCurrentArticle()
         {
             localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(currentArticleTitle), currentArticleText);
-            _ = SendAlertOrNotification("Article Downloaded", $"Article {currentArticleTitle} has been downloaded and added to your library!", "Cool!");
+            NotificationService.SendAlertOrNotification("Article Downloaded", $"Article {currentArticleTitle} has been downloaded and added to your library!", "Cool!");
         }
 
         /// <summary>
@@ -160,156 +161,32 @@ namespace YoWiki.ViewModels
                 // Make sure there are less than 10000 articles since the way we are calling the wikipedia api only allows for 10000 downloads
                 if (SearchResult.Totalhits < 10000)
                 {
-                    _ = SendAlertOrNotification("Downloading your articles:", "The articles will now be downloaded. You can leave the app. A notification will be sent when downloading is finished." +
-                        "\n Only articles that you have not already saved will be downloaded to save time.", "Okay");
-
                     IsBusy = true;
-                    MessageText = "Fetching the names of all articles from Wikipedia.";
-                    DateTime startTime = DateTime.Now;
 
-                    // Figure out what articles have not been downloaded yet
+                    // Figure out what articles have not been downloaded yet and aren't currently downloading
                     List<string> names = await wikipediaService.GetAllNamesFromSearch(EntryText, SearchResult.Totalhits);
                     List<string> savedNames = localArticlesService.GetNamesOfSavedArticles();
-                    List<string> namesToDownload = names.Where(n => !savedNames.Contains(hTMLService.ReplaceColons(n))).ToList();
-
-                    await DownloadAllArticlesFromList(namesToDownload);
+                    List<string> downloadingNames = PersistentDownloadService.GetStatus().ArticlesLeftToDownload;
+                    List<string> namesToDownload = names.Where(n => !savedNames.Contains(hTMLService.ReplaceColons(n)) && !downloadingNames.Contains(hTMLService.ReplaceColons(n))).ToList();
 
                     IsBusy = false;
 
-                    UpdateAverageDownloadTime(GetMilliSecondsSinceStart(startTime), namesToDownload.Count);
-                    MessageText = $"Downloaded {names.Count} Articles. In {FormatTime(GetMilliSecondsSinceStart(startTime))}.";
-                    _ = SendAlertOrNotification("Articles Added", $"{names.Count} articles have been downloaded and added to your library.", "Okay");
+                    if (namesToDownload.Count <= 0)
+                    {
+                        NotificationService.SendAlertOrNotification("No New Articles", "It looks like all these articles are downloaded or are currently downloading. No new articles will be added to the queue.", "Alright");
+                        return;
+                    }
+
+                    PersistentDownloadService.AddArticlesToList(namesToDownload);
+
+                    NotificationService.SendAlertOrNotification("Downloads Queued:", "The articles you selected have been added to the download queue. You can see the progress by entering the download center in the top right corner.", "Cool");
                 }
                 else
                 {
-                    _ = SendAlertOrNotification("To Many Articles", "Due to limitations with the Wikipedia API you cannot download more than 10,000 articles at once. Try adding another word to your search to narrow it. I am working on it.", "Okay");
+                    NotificationService.SendAlertOrNotification("To Many Articles", "Due to limitations with the Wikipedia API you cannot download more than 10,000 articles at once. Try adding another word to your search to narrow it. I am working on it.", "Okay");
                 }
             }
         }
         #endregion
-
-        #region Helper Functions
-        /// <summary>
-        /// Function to handle sending notifications and alerts. If the app is in background it will send notification,
-        /// if the app is in the foreground it will send an alert
-        /// </summary>
-        /// <param name="title">Title of alert or notification</param>
-        /// <param name="text">Main body text of alert or notification</param>
-        /// <param name="buttonText">Button text for alert</param>
-        /// <returns>Nothing</returns>
-        private async Task SendAlertOrNotification(string title, string text, string buttonText)
-        {
-            if (App.IsInBackground)
-            {
-                var notification = new NotificationRequest
-                {
-                    NotificationId = 100,
-                    Title = title,
-                    Description = text
-                };
-                NotificationCenter.Current.Show(notification);
-            }
-
-            // Also send alert they can see when they get back into the app
-            await Shell.Current.DisplayAlert(title, text, buttonText);
-        }
-
-        /// <summary>
-        /// Function to get time formatted in a user friendly way
-        /// </summary>
-        /// <param name="milliseconds">Millisecond time to format</param>
-        /// <returns>String with formatted time</returns>
-        private string FormatTime(double milliseconds)
-        {
-            string formattedTime = string.Format("{0:f2} Milliseconds", milliseconds);
-            double seconds = milliseconds / 1000;
-            double minutes = seconds / 60;
-            double hours = minutes / 60;
-            double days = hours / 24;
-
-            if (seconds > 1)
-            {
-                formattedTime = string.Format("{0:f2} Seconds", seconds);
-            }
-            if (minutes > 1)
-            {
-                formattedTime = string.Format("{0:f2} Minutes", minutes);
-            }
-            if (hours > 1)
-            {
-                formattedTime = string.Format("{0:f2} Hours", hours);
-            }
-            if (days > 1)
-            {
-                formattedTime = string.Format("{0:f2} Days", days);
-            }
-
-            return formattedTime;
-        }
-
-        /// <summary>
-        /// Function to get the number of milliseconds that have passed since a certain time
-        /// </summary>
-        /// <param name="start">Start time to measure from</param>
-        /// <returns>Double representing the milliseconds</returns>
-        private double GetMilliSecondsSinceStart(DateTime start)
-        {
-            return (DateTime.Now - start).TotalMilliseconds;
-        }
-
-        /// <summary>
-        /// Function to download all the articles in a list of article names
-        /// </summary>
-        /// <param name="articleNames">List with names of articles to download</param>
-        /// <returns>Nothing</returns>
-        private async Task DownloadAllArticlesFromList(List<string> articleNames)
-        {
-            for (int i = 0; i < articleNames.Count; i++)
-            {
-                int itemsLeft = articleNames.Count - i;
-                double estTime = itemsLeft * Settings.AverageDownloadTime;
-                string formattedEstTime = FormatTime(estTime);
-                MessageText = $"Downloading {i} out of {articleNames.Count} Articles...\nEstimated time: {formattedEstTime}";
-
-                await DownloadArticle(articleNames[i]);
-            }
-        }
-
-        private async Task DownloadArticle(string title)
-        {
-            try
-            {
-                string articleText = hTMLService.InjectCSS(await wikipediaService.DownloadArticleHTML(title));
-
-                localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(title), articleText);
-            }
-            catch
-            {
-                MessageText = "Failed";
-            }
-        }
-
-        /// <summary>
-        /// Function to update the average download times
-        /// </summary>
-        /// <param name="totalTime">Total time it took to download the articles</param>
-        /// <param name="numberDownloaded">Number of articles that were downloaded</param>
-        private void UpdateAverageDownloadTime(double totalTime, int numberDownloaded)
-        {
-            // Check if any data is in the average download time, would be 0 if there was no data
-            if (Math.Abs(Settings.AverageDownloadTime - 1) < 0.001)
-            {
-                Settings.AverageDownloadTime = totalTime / numberDownloaded;
-                Settings.NumberOfEntriesInAverageDownloadTime = numberDownloaded;
-            }
-            else
-            {
-                Settings.NumberOfEntriesInAverageDownloadTime += numberDownloaded;
-                Settings.AverageDownloadTime = (Settings.AverageDownloadTime * (Settings.NumberOfEntriesInAverageDownloadTime - numberDownloaded)
-                    + totalTime) / Settings.NumberOfEntriesInAverageDownloadTime;
-            }
-        }
-        #endregion
-
     }
 }

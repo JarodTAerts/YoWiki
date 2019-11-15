@@ -17,7 +17,6 @@ namespace YoWiki.Services
             string resourceName = assembly.GetManifestResourceNames()
                 .Single(str => str.EndsWith("common.css"));
 
-            string css = "";
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
             {
