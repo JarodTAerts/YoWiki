@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using YoWiki.Services;
 using YoWiki.ViewModels;
 
 namespace YoWiki.Views
@@ -11,6 +12,7 @@ namespace YoWiki.Views
         public BrowsePage()
         {
             InitializeComponent();
+            PersistentDownloadService.AddBadgeCallback(UpdateBadgeNumber);
         }
 
         protected override void OnAppearing()
@@ -18,6 +20,11 @@ namespace YoWiki.Views
             var viewModel = (BrowseViewModel)BindingContext;
             Task.Run(() => viewModel.LoadLocalArticles());
             base.OnAppearing();
+        }
+
+        public void UpdateBadgeNumber(int num)
+        {
+            BadgedIcon.BadgeNumber = num;
         }
     }
 }

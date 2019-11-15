@@ -1,5 +1,6 @@
 ﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using YoWiki.Services;
 
 namespace YoWiki.Views
 {
@@ -9,6 +10,13 @@ namespace YoWiki.Views
         public SettingsPage()
         {
             InitializeComponent();
+
+            PersistentDownloadService.AddBadgeCallback(UpdateBadgeNumber);
+        }
+
+        public void UpdateBadgeNumber(int num)
+        {
+            BadgedIcon.BadgeNumber = num;
         }
     }
 }

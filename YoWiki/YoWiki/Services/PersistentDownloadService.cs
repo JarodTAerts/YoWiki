@@ -12,26 +12,30 @@ namespace YoWiki.Services
     {
         private static object queueLock = new object();
         private static List<string> downloadQueue;
-        private static int totalNumArticles = 0;
-
+        public static int TotalNumArticles
+        {
+            get; set;
+        } = 0;
         private static IWikipediaAccessor wikipediaAccessor;
         private static IHTMLService hTMLService;
         private static ILocalArticlesService localArticlesService;
 
         private static Action<string> updateAction;
+        private static List<Action<int>> subscribedBadgeCallbacks;
         public static void Start()
         {
             wikipediaAccessor = DependencyService.Resolve<IWikipediaAccessor>();
             hTMLService = DependencyService.Resolve<IHTMLService>();
             localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
             downloadQueue = new List<string>();
+            subscribedBadgeCallbacks = new List<Action<int>>();
 
             List<string> settingsDownloadQueue = Settings.DownloadQueue;
 
             if(settingsDownloadQueue.Count > 0)
             {
                 downloadQueue = settingsDownloadQueue;
-                totalNumArticles = Settings.TotalNumberOfArticlesToDownload;
+                TotalNumArticles = Settings.TotalNumberOfArticlesToDownload;
             }
 
             // Start Consumer Function
@@ -43,10 +47,10 @@ namespace YoWiki.Services
             lock (queueLock)
             {
                 downloadQueue.AddRange(articlesToAdd);
-                totalNumArticles += articlesToAdd.Count;
+                TotalNumArticles += articlesToAdd.Count;
             }
 
-            Settings.TotalNumberOfArticlesToDownload = totalNumArticles;
+            Settings.TotalNumberOfArticlesToDownload = TotalNumArticles;
             Settings.DownloadQueue = downloadQueue;
         }
 
@@ -55,42 +59,64 @@ namespace YoWiki.Services
             updateAction = action;
         }
 
+        public static void AddBadgeCallback(Action<int> action)
+        {
+            subscribedBadgeCallbacks.Add(action);
+        }
+
         private static void DownloadQueueConsumer()
         {
             bool justDownloaded = false;
             while (true)
             {
-                if (downloadQueue.Count == 0)
+                try
                 {
-                    if (justDownloaded)
+                    if (downloadQueue.Count == 0)
                     {
-                        updateAction?.Invoke($"Downloaded {totalNumArticles} articles.");
-                        int articlesDownloaded = totalNumArticles;
-                        Device.BeginInvokeOnMainThread(() => NotificationService.SendAlertOrNotification("Articles Added", $"{articlesDownloaded} articles have been downloaded and added to your library.", "Okay"));
-                        totalNumArticles = 0;
-                        Settings.TotalNumberOfArticlesToDownload = totalNumArticles;
-                        justDownloaded = false;
+                        if (justDownloaded)
+                        {
+                            updateAction?.Invoke($"Downloaded {TotalNumArticles} articles.");
+                            UpdateBadgeCallbacks();
+                            int articlesDownloaded = TotalNumArticles;
+                            Device.BeginInvokeOnMainThread(() => NotificationService.SendAlertOrNotification("Articles Added", $"{articlesDownloaded} articles have been downloaded and added to your library.", "Okay"));
+                            TotalNumArticles = 0;
+                            Settings.TotalNumberOfArticlesToDownload = TotalNumArticles;
+                            justDownloaded = false;
+                        }
+
+                        // Only delay if there are not articles to download
+                        Task.Delay(1000).Wait();
+                        continue;
                     }
 
-                    // Only delay if there are not articles to download
-                    Task.Delay(1000).Wait();
-                    continue;
+                    string articleToDownload = downloadQueue[0];
+
+                    DownloadArticle(articleToDownload).Wait();
+
+                    lock (queueLock)
+                    {
+                        downloadQueue.RemoveAt(0);
+                    }
+
+                    Settings.DownloadQueue = downloadQueue;
+
+                    updateAction?.Invoke($"Downloading article {TotalNumArticles - downloadQueue.Count} out of {TotalNumArticles}.");
+                    UpdateBadgeCallbacks();
+
+                    justDownloaded = true;
                 }
-
-                string articleToDownload = downloadQueue[0];
-
-                DownloadArticle(articleToDownload).Wait();
-
-                lock (queueLock)
+                catch(Exception e)
                 {
-                    downloadQueue.RemoveAt(0);
+                    int i = 88;
                 }
+            }
+        }
 
-                Settings.DownloadQueue = downloadQueue;
-
-                updateAction?.Invoke($"Downloading article {totalNumArticles - downloadQueue.Count} out of {totalNumArticles}.");
-
-                justDownloaded = true;
+        private static void UpdateBadgeCallbacks()
+        {
+            foreach(Action<int> action in subscribedBadgeCallbacks)
+            {
+                Device.BeginInvokeOnMainThread(()=>action?.Invoke(downloadQueue.Count));
             }
         }
 

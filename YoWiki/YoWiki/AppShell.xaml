@@ -3,10 +3,12 @@
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
        xmlns:d="http://xamarin.com/schemas/2014/forms/design" 
        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-       mc:Ignorable="d" xmlns:local="clr-namespace:YoWiki.Views" 
+       mc:Ignorable="d" xmlns:local="clr-namespace:YoWiki.Views"
+       xmlns:controls="clr-namespace:YoWiki.Controls"
        Title="YoWiki" 
-       x:Class="YoWiki.AppShell">
-
+       x:Class="YoWiki.AppShell"
+       Shell.NavBarIsVisible="True">
+    
     <!-- 
         Styles and Resources 
     -->
@@ -27,6 +29,15 @@
             <Style TargetType="ShellItem" BasedOn="{StaticResource BaseStyle}" />
         </ResourceDictionary>
     </Shell.Resources>
+
+    <Shell.TitleView>
+        <StackLayout Orientation="Horizontal">
+            <Label Text="YoWiki" TextColor="{StaticResource BackgroundLight}" FontSize="Large" FontAttributes="Bold" HorizontalOptions="StartAndExpand" VerticalOptions="CenterAndExpand"/>
+
+            <controls:BadgedIconButton HorizontalOptions="End" VerticalOptions="CenterAndExpand" IconSource="download.png" BadgeNumber="1000" BadgeColor="Red"/>
+        </StackLayout>
+    </Shell.TitleView>
+    
 
     <!-- Your Pages -->
     <TabBar>

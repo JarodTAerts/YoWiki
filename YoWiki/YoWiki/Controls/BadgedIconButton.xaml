@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AbsoluteLayout xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="YoWiki.Controls.BadgedIconButton"
+             WidthRequest="75">
+
+    <Button x:Name="IconButton" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" BackgroundColor="Transparent" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand"/>
+    <Frame x:Name="Frame" AbsoluteLayout.LayoutBounds="0.75,0.25,25,25" AbsoluteLayout.LayoutFlags="PositionProportional" CornerRadius="50" VerticalOptions="CenterAndExpand"/>
+    <StackLayout x:Name="LabelLayout" AbsoluteLayout.LayoutBounds="0.75,0.25,25,25" AbsoluteLayout.LayoutFlags="PositionProportional">
+        <Label x:Name="ValueLabel" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" TextColor="{StaticResource BackgroundLight}" FontSize="Micro" FontAttributes="Bold" LineBreakMode="NoWrap"/>
+    </StackLayout>
+
+
+</AbsoluteLayout>
