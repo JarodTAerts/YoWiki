@@ -37,5 +37,12 @@ namespace YoWiki.Services.Interfaces
         /// </summary>
         /// <param name="title">Title of article to delete</param>
         void DeleteArticle(string title);
+
+        /// <summary>
+        /// Function to check if an article exists locally
+        /// </summary>
+        /// <param name="title">Title of article to check for</param>
+        /// <returns></returns>
+        bool ArticleExists(string title);
     }
 }

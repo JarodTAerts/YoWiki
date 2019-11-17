@@ -40,5 +40,12 @@ namespace YoWiki.Accessors.Interfaces
         /// Function to delete a specific file from storage
         /// </summary>
         void DeleteFile(string filePath);
+
+        /// <summary>
+        /// Function to check if file exists in local storage
+        /// </summary>
+        /// <param name="filePath">Path to file</param>
+        /// <returns></returns>
+        bool FileExists(string filePath);
     }
 }

@@ -145,7 +145,7 @@ namespace YoWiki.ViewModels
             SelectedItem = null;
             IsBusy = true;
 
-            AllSavedArticles = localArticlesService.GetNamesOfSavedArticles();
+            AllSavedArticles = localArticlesService.GetNamesOfSavedArticles().Select(n => n.Replace("_", " ")).ToList();
             VisibleArticles = AllSavedArticles;
             NumbersText = "Number of Articles: " + VisibleArticles.Count;
 

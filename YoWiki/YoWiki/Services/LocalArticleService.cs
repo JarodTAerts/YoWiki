@@ -61,5 +61,12 @@ namespace YoWiki.Services
 
             storageAccessor.WriteTextToFile(filePath, text);
         }
+
+        public bool ArticleExists(string title)
+        {
+            string filePath = Path.Combine(storagePath, $"{title}.html");
+
+            return storageAccessor.FileExists(filePath);
+        }
     }
 }

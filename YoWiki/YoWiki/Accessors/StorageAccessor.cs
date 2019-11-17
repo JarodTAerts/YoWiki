@@ -44,5 +44,10 @@ namespace YoWiki.Accessors
         {
             File.WriteAllText(filePath, text);
         }
+
+        public bool FileExists(string filePath)
+        {
+            return File.Exists(filePath);
+        }
     }
 }

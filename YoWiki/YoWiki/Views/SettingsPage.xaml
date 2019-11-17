@@ -24,7 +24,7 @@
     <ContentView>
         <StackLayout BackgroundColor="{StaticResource BackgroundLight}" Padding="15" Spacing="10">
 
-            <StackLayout Orientation="Horizontal">
+            <!--<StackLayout Orientation="Horizontal">
                 <Label Text="Download over Cellular: " VerticalOptions="CenterAndExpand"/>
                 <Switch x:Name="CellDownloadSwitch" VerticalOptions="CenterAndExpand" IsToggled="{Binding DownloadOverCeullular}"/>
             </StackLayout>
@@ -32,7 +32,7 @@
             <StackLayout Orientation="Horizontal">
                 <Label Text="Download Images: " VerticalOptions="CenterAndExpand"/>
                 <Switch x:Name="DownloadImagesSwitch" VerticalOptions="CenterAndExpand" IsToggled="{Binding DownloadImages}"/>
-            </StackLayout>
+            </StackLayout>-->
 
             <StackLayout Orientation="Horizontal">
                 <Label Text="Number of Returned Example Articles: " VerticalOptions="CenterAndExpand"/>

@@ -27,6 +27,7 @@ namespace YoWiki.Services
         public string ReplaceColons(string input)
         {
             input = Regex.Replace(input, "/", "-");
+            input = Regex.Replace(input, " ", "_");
             return Regex.Replace(input, ":", "-");
         }
 
