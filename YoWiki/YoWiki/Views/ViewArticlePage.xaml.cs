@@ -40,6 +40,12 @@ namespace YoWiki.Views
             Shell.Current.Navigation.PopModalAsync();
         }
 
+        /// <summary>
+        /// Function to intercept when a user clicks a link in an article and stop the webview from trying to navigate to it
+        /// It also brings up that article so long as it is stored locally
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public async void LinkClicked(object sender, WebNavigatingEventArgs e)
         {
             e.Cancel = true;
