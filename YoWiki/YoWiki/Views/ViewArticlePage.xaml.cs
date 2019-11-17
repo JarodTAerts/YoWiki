@@ -29,8 +29,9 @@ namespace YoWiki.Views
             Shell.Current.Navigation.PopModalAsync();
         }
 
-        public void LinkClicked(object sender, WebNavigatedEventArgs e)
+        public void LinkClicked(object sender, WebNavigatingEventArgs e)
         {
+            e.Cancel = true;
             return;
         }
 
