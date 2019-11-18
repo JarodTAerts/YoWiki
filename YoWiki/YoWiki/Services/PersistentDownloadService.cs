@@ -44,7 +44,7 @@ namespace YoWiki.Services
             wikipediaAccessor = DependencyService.Resolve<IWikipediaAccessor>();
             hTMLService = DependencyService.Resolve<IHTMLService>();
             localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
-           
+
             DownloadQueue = new List<string>();
             subscribedBadgeCallbacks = new List<Action<int>>();
             subscribedStatusCallbacks = new List<Action<DownloadsStatusUpdate>>();
@@ -77,7 +77,7 @@ namespace YoWiki.Services
             }
 
             UpdateBadgeCallbacks();
-            UpdateStatusCallbacks();
+            UpdateStatusCallbacks($"Downloading article {TotalNumArticles - DownloadQueue.Count} out of {TotalNumArticles}.");
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace YoWiki.Services
                         if (justDownloaded)
                         {
                             // If we just finished download all articles in the list we must return the service to state and give a final update to all the subscribed customers
-                            UpdateStatusCallbacks();
+                            UpdateStatusCallbacks($"Downloading article {TotalNumArticles - DownloadQueue.Count} out of {TotalNumArticles}.");
                             UpdateBadgeCallbacks();
                             int articlesDownloaded = TotalNumArticles;
                             Device.BeginInvokeOnMainThread(() => NotificationService.SendAlertOrNotification("Articles Added", $"{articlesDownloaded} articles have been downloaded and added to your library.", "Okay"));
@@ -171,7 +171,7 @@ namespace YoWiki.Services
 
                     UpdateAverageDownloadTime((DateTime.Now - startTime).Milliseconds, 1);
 
-                    UpdateStatusCallbacks();
+                    UpdateStatusCallbacks($"Downloading article {TotalNumArticles - DownloadQueue.Count} out of {TotalNumArticles}.");
                     UpdateBadgeCallbacks();
 
                     justDownloaded = true;
@@ -180,6 +180,8 @@ namespace YoWiki.Services
                 {
                     // TODO: Handle this in some way
                     int i = 88;
+                    UpdateStatusCallbacks($"Error downloading. Waiting for Internet connection to continue downloading. If the downloads do not continue after connection is reestablished try restarting the application and downloads will continue.");
+                    Task.Delay(2000).Wait();
                 }
             }
         }
@@ -201,9 +203,8 @@ namespace YoWiki.Services
         /// <summary>
         /// Update all subscribed callbacks with the status of the service
         /// </summary>
-        private static void UpdateStatusCallbacks()
+        private static void UpdateStatusCallbacks(string message)
         {
-            string message = $"Downloading article {TotalNumArticles - DownloadQueue.Count} out of {TotalNumArticles}.";
             if (DownloadQueue.Count == 0)
                 message = "There are currently no articles queued for download.";
 
@@ -231,17 +232,9 @@ namespace YoWiki.Services
         /// <returns></returns>
         private static async Task DownloadArticle(string title)
         {
-            try
-            {
-                string articleText = hTMLService.InjectCSS(await wikipediaAccessor.DownloadArticleHTML(title));
+            string articleText = hTMLService.InjectCSS(await wikipediaAccessor.DownloadArticleHTML(title));
 
-                localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(title), articleText);
-            }
-            catch
-            {
-                // TODO: Log this
-                int i = 88;
-            }
+            localArticlesService.SaveHTMLFileToStorage(hTMLService.ReplaceColons(title), articleText);
         }
 
 
