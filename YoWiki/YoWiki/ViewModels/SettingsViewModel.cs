@@ -56,6 +56,9 @@ namespace YoWiki.ViewModels
         private void OnAboutYoWiki()
         {
             // TODO: Create about page and navigate there
+            Shell.Current.DisplayAlert("About YoWiki","YoWiki is an open-source, cross-platform mobile app that allows users to download Wikipedia articles and read them offline. " +
+                "Users can maintain a personal Wikipedia library of any size with articles and topics of their choosing. It comes packed with various features to facilitate " +
+                "learning everywhere and at every time whether there is a connection to the internet or not. \n\n Website Coming Soon.", "Cool");
         }
 
         /// <summary>

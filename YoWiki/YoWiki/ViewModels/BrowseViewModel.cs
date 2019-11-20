@@ -47,8 +47,8 @@ namespace YoWiki.ViewModels
         public string EntryText
         {
             get => _entryText;
-            set 
-            { 
+            set
+            {
                 SetProperty(ref _entryText, value);
                 OnSearchButtonClicked();
             }
@@ -100,14 +100,27 @@ namespace YoWiki.ViewModels
 
                 string articleHtml = localArticlesService.GetHTMLTextFromFile(currentArticleTitle);
                 WebViewSource webViewSource = new HtmlWebViewSource { Html = articleHtml };
-                await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Delete", new Command(DeleteArticle))));
+                await Shell.Current.Navigation.PushModalAsync(new NavigationPage(new ViewArticlePage(webViewSource, "Delete", new Command(DeleteArticle), GetRandomArticle)));
                 IsBusy = false;
             }
         }
 
+        public WebViewSource GetRandomArticle()
+        {
+            if (AllSavedArticles.Count <= 0)
+                return null;
+
+            currentArticleTitle = hTMLService.ReplaceColons(AllSavedArticles[random.Next(AllSavedArticles.Count)]);
+            string articleHtml = localArticlesService.GetHTMLTextFromFile(currentArticleTitle);
+            return new HtmlWebViewSource { Html = articleHtml };
+        }
+
         private void OnRandomArticleClicked()
         {
-            EntryText = AllSavedArticles[random.Next(AllSavedArticles.Count)];
+            if (AllSavedArticles.Count > 0)
+            {
+                EntryText = AllSavedArticles[random.Next(AllSavedArticles.Count)];
+            }
         }
 
         /// <summary>
@@ -115,7 +128,7 @@ namespace YoWiki.ViewModels
         /// </summary>
         private void OnSearchButtonClicked()
         {
-            if(EntryText == null)
+            if (EntryText == null)
             {
                 VisibleArticles = AllSavedArticles;
             }
@@ -129,10 +142,15 @@ namespace YoWiki.ViewModels
         /// <summary>
         /// Command function to delete the article that the user is currently viewing
         /// </summary>
-        private void DeleteArticle()
+        private async void DeleteArticle()
         {
-            localArticlesService.DeleteArticle(currentArticleTitle);
-            Shell.Current.DisplayAlert("Article Deleted", $"Article {currentArticleTitle} was deleted from local library.", "Ight");
+            string choice = await Shell.Current.DisplayActionSheet($"Are you sure you want to delete {currentArticleTitle} from your library?", "Nah", "DELETE IT");
+
+            if (choice == "DELETE IT")
+            {
+                localArticlesService.DeleteArticle(currentArticleTitle);
+                await Shell.Current.DisplayAlert("Article Deleted", $"Article {currentArticleTitle} was deleted from local library.", "Ight");
+            }
         }
         #endregion
 

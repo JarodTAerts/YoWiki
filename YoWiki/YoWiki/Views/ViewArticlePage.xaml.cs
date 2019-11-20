@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using Xamarin.Forms;
 using YoWiki.Services;
 using YoWiki.Services.Interfaces;
@@ -9,6 +10,7 @@ namespace YoWiki.Views
     {
         public Command GoBackCommand;
         public Command ActionCommand;
+        private Func<WebViewSource> getRandomArticle;
 
         private ILocalArticlesService localArticlesService;
         private IHTMLService hTMLService;
@@ -18,11 +20,31 @@ namespace YoWiki.Views
             InitializeComponent();
             webView.Source = webViewSource;
             GoBackCommand = new Command(GoBack);
-            backButton.Command = GoBackCommand;
+            backButton.GestureRecognizers.Add(new TapGestureRecognizer { Command = GoBackCommand });
 
             ActionCommand = actionCommand;
             actionButton.Text = actionText;
-            actionButton.Command = actionCommand;
+            actionButton.GestureRecognizers.Add(new TapGestureRecognizer { Command = actionCommand });
+
+            randomButton.IsVisible = false;
+
+            localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
+            hTMLService = DependencyService.Resolve<IHTMLService>();
+        }
+
+        public ViewArticlePage(WebViewSource webViewSource, string actionText, Command actionCommand, Func<WebViewSource> randomCommand)
+        {
+            InitializeComponent();
+            webView.Source = webViewSource;
+            GoBackCommand = new Command(GoBack);
+            backButton.GestureRecognizers.Add(new TapGestureRecognizer { Command = GoBackCommand });
+
+            ActionCommand = actionCommand;
+            actionButton.Text = actionText;
+            actionButton.GestureRecognizers.Add(new TapGestureRecognizer { Command = actionCommand });
+
+            randomButton.Command = new Command(LoadRandomArticle);
+            getRandomArticle = randomCommand;
 
             localArticlesService = DependencyService.Resolve<ILocalArticlesService>();
             hTMLService = DependencyService.Resolve<IHTMLService>();
@@ -32,12 +54,18 @@ namespace YoWiki.Views
         {
             InitializeComponent();
             GoBackCommand = new Command(GoBack);
-            backButton.Command = GoBackCommand;
+            backButton.GestureRecognizers.Add(new TapGestureRecognizer { Command = GoBackCommand });
         }
 
         public void GoBack()
         {
             Shell.Current.Navigation.PopModalAsync();
+        }
+
+        public void LoadRandomArticle()
+        {
+            WebViewSource newSource = getRandomArticle();
+            webView.Source = newSource;
         }
 
         /// <summary>
