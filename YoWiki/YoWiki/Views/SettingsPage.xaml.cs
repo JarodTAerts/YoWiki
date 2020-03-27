@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using YoWiki.Services;
+using YoWiki.ViewModels;
 
 namespace YoWiki.Views
 {
@@ -34,6 +35,13 @@ namespace YoWiki.Views
         public void UpdateBadgeNumber(int num)
         {
             BadgedIcon.BadgeNumber = num;
+        }
+
+        protected override void OnAppearing()
+        {
+            // Update UI elements in case things have changed since the settings page was last changed
+            ((SettingsViewModel)BindingContext).UpdateViewElements();
+            base.OnAppearing();
         }
     }
 }

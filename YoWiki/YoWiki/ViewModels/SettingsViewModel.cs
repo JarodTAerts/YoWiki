@@ -1,5 +1,6 @@
 ﻿using System;
 using Xamarin.Forms;
+using YoWiki.Models;
 using YoWiki.Services;
 using YoWiki.Services.Interfaces;
 
@@ -30,6 +31,13 @@ namespace YoWiki.ViewModels
             get => _downloadImages;
             set { SetProperty(ref _downloadImages, value); OnDownloadImagesChanged(); }
         }
+
+        private string _storageUsedString;
+        public string StorageUsedString
+        {
+            get => _storageUsedString;
+            set => SetProperty(ref _storageUsedString, value);
+        }
         #endregion
 
         #region Delegate Commands
@@ -49,8 +57,28 @@ namespace YoWiki.ViewModels
             DownloadImages = Settings.DownloadImages;
             ClearArticlesCommand = new Command(OnClearArticles);
             AboutYoWikiCommand = new Command(OnAboutYoWiki);
+
+            StorageUsedString = $"Storage Used: {localArticlesService.GetStorageUsed()}";
+
+            PersistentDownloadService.AddStatusCallBack(UpdateViewElements);
         }
         #endregion
+
+        public void UpdateViewElements()
+        {
+            StorageUsedString = $"Storage Used: {localArticlesService.GetStorageUsed()}";
+            PickedItemNumber = Settings.NumberOfResults.ToString();
+            DownloadOverCeullular = Settings.DownloadOverCell;
+            DownloadImages = Settings.DownloadImages;
+        }
+
+        public void UpdateViewElements(DownloadsStatusUpdate update)
+        {
+            StorageUsedString = $"Storage Used: {localArticlesService.GetStorageUsed()}";
+            PickedItemNumber = Settings.NumberOfResults.ToString();
+            DownloadOverCeullular = Settings.DownloadOverCell;
+            DownloadImages = Settings.DownloadImages;
+        }
 
         #region Command Functions
         private void OnAboutYoWiki()
@@ -58,7 +86,7 @@ namespace YoWiki.ViewModels
             // TODO: Create about page and navigate there
             Shell.Current.DisplayAlert("About YoWiki","YoWiki is an open-source, cross-platform mobile app that allows users to download Wikipedia articles and read them offline. " +
                 "Users can maintain a personal Wikipedia library of any size with articles and topics of their choosing. It comes packed with various features to facilitate " +
-                "learning everywhere and at every time whether there is a connection to the internet or not. \n\n Website Coming Soon.", "Cool");
+                "learning everywhere and at every time whether there is a connection to the Internet or not. \n\n Website Coming Soon.", "Cool");
         }
 
         /// <summary>
@@ -96,6 +124,7 @@ namespace YoWiki.ViewModels
             {
                 localArticlesService.ClearSavedArticles();
                 _ = Shell.Current.DisplayAlert("Articles Cleared", "All articles from your local library.", "Ok");
+                StorageUsedString = $"Storage Used: {localArticlesService.GetStorageUsed()}";
             }
         }
         #endregion

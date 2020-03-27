@@ -68,5 +68,25 @@ namespace YoWiki.Services
 
             return storageAccessor.FileExists(filePath);
         }
+
+        public string GetStorageUsed()
+        {
+            if (!Directory.Exists(storagePath)) return "0 Bytes";
+
+            long bytesUsed = new DirectoryInfo(storagePath).EnumerateFiles().Sum(file => file.Length);
+
+            float storageUsed = bytesUsed;
+            
+            if(storageUsed < 1000) return $"{Math.Round(storageUsed,2)} Bytes";
+            storageUsed /= 1000;
+
+            if (storageUsed < 1000) return $"{Math.Round(storageUsed, 2)} KBs";
+            storageUsed /= 1000;
+
+            if (storageUsed < 1000) return $"{Math.Round(storageUsed, 2)} MBs";
+            storageUsed /= 1000;
+
+            return $"{Math.Round(storageUsed, 2)} GBs";
+        }
     }
 }
