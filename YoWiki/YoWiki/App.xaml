@@ -9,6 +9,7 @@
         <ResourceDictionary>
             <Color x:Key="PrimaryLight">#2196F3</Color>
             <Color x:Key="BackgroundLight">#F5F5F5</Color>
+            <Color x:Key="SecondaryLight">#DDDDDD</Color>
 
             <Color x:Key="PrimaryDark">#333333</Color>
             <Color x:Key="AccentDark">#555555</Color>
@@ -16,6 +17,12 @@
             <Style x:Key="BaseButtonStyle" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="{StaticResource PrimaryLight}"/>
                 <Setter Property="TextColor" Value="{StaticResource BackgroundLight}"/>
+                <Setter Property="CornerRadius" Value="15"/>
+            </Style>
+
+            <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource SecondaryLight}"/>
+                <Setter Property="TextColor" Value="{StaticResource PrimaryDark}"/>
                 <Setter Property="CornerRadius" Value="15"/>
             </Style>
         </ResourceDictionary>

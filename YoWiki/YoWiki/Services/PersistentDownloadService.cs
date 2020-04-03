@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using YoWiki.Accessors.Interfaces;
 using YoWiki.Models;
@@ -156,6 +157,20 @@ namespace YoWiki.Services
                         continue;
                     }
 
+                    if (!CheckInternetConnection())
+                    {
+                        UpdateStatusCallbacks($"Waiting for Internet connection to continue downloading.");
+                        Task.Delay(2000).Wait();
+                        continue;
+                    }
+
+                    if(!CheckWifiConnection() && !Settings.DownloadOverCell)
+                    {
+                        UpdateStatusCallbacks($"Waiting for wifi connection to continue downloading.");
+                        Task.Delay(2000).Wait();
+                        continue;
+                    }
+
                     DateTime startTime = DateTime.Now;
 
                     string articleToDownload = DownloadQueue[0];
@@ -188,6 +203,32 @@ namespace YoWiki.Services
 
 
         #region Private Helper Functions
+        /// <summary>
+        /// Function to check if there is an active connection to the internet
+        /// Uses the Xamarin.Essentials API
+        /// </summary>
+        /// <returns>Bool representing if we are connected to internet or not</returns>
+        private static bool CheckInternetConnection()
+        {
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Function to check if there is an active connection to WIFI
+        /// Using the Xamarin.Essentials API
+        /// </summary>
+        /// <returns>Bool of if we are connected to wifi</returns>
+        private static bool CheckWifiConnection()
+        {
+            if (Connectivity.ConnectionProfiles.Contains(ConnectionProfile.WiFi))
+                return true;
+
+            return false;
+        }
+
         /// <summary>
         /// Function to update all subscribed callbacks with the number of articles remaining
         /// This is used for the badges on the download center icon

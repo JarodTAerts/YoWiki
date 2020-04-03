@@ -44,5 +44,11 @@ namespace YoWiki.Services.Interfaces
         /// <param name="title">Title of article to check for</param>
         /// <returns></returns>
         bool ArticleExists(string title);
+
+        /// <summary>
+        /// Function to get the amount of storage used by the articles
+        /// </summary>
+        /// <returns>String of how much storage is used</returns>
+        string GetStorageUsed();
     }
 }
