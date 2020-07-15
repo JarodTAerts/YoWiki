@@ -140,16 +140,19 @@ namespace YoWiki.Services
                 {
                     if (DownloadQueue.Count == 0)
                     {
-                        if (justDownloaded)
+                        if (justDownloaded && TotalNumArticles != 0)
                         {
-                            // If we just finished download all articles in the list we must return the service to state and give a final update to all the subscribed customers
-                            UpdateStatusCallbacks($"Downloading article {TotalNumArticles - DownloadQueue.Count} out of {TotalNumArticles}.");
-                            UpdateBadgeCallbacks();
-                            int articlesDownloaded = TotalNumArticles;
-                            Device.BeginInvokeOnMainThread(() => NotificationService.SendAlertOrNotification("Articles Added", $"{articlesDownloaded} articles have been downloaded and added to your library.", "Okay"));
-                            TotalNumArticles = 0;
-                            Settings.TotalNumberOfArticlesToDownload = TotalNumArticles;
-                            justDownloaded = false;
+                            lock (queueLock)
+                            {
+                                // If we just finished download all articles in the list we must return the service to state and give a final update to all the subscribed customers
+                                UpdateStatusCallbacks($"Downloading article {TotalNumArticles - DownloadQueue.Count} out of {TotalNumArticles}.");
+                                UpdateBadgeCallbacks();
+                                int articlesDownloaded = TotalNumArticles;
+                                Device.BeginInvokeOnMainThread(() => NotificationService.SendAlertOrNotification("Articles Added", $"{articlesDownloaded} articles have been downloaded and added to your library.", "Okay"));
+                                TotalNumArticles = 0;
+                                Settings.TotalNumberOfArticlesToDownload = TotalNumArticles;
+                                justDownloaded = false;
+                            }
                         }
 
                         // Only delay if there are not articles to download
@@ -193,8 +196,6 @@ namespace YoWiki.Services
                 }
                 catch (Exception e)
                 {
-                    // TODO: Handle this in some way
-                    int i = 88;
                     UpdateStatusCallbacks($"Error downloading. Waiting for Internet connection to continue downloading. If the downloads do not continue after connection is reestablished try restarting the application and downloads will continue.");
                     Task.Delay(2000).Wait();
                 }
